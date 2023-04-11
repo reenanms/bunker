@@ -7,9 +7,10 @@
   "scripts": {
     "start-server": "docker-compose up -d",
     "stop-server": "docker-compose down",
-    "debug-old": "ts-node-esm src/index.ts",
-    "debug": "node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm src/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "sql-migrate": "prisma migrate dev --name init --schema ./src/SQL/prisma/schema.prisma",
+    "sql-debug": "node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./src/SQL/index.ts",
+    "nosql-migrate": "prisma generate --schema ./src/noSQL/prisma/schema.prisma",
+    "nosql-debug": "node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./src/noSQL/index.ts"
   },
   "repository": {
     "type": "git",
@@ -24,10 +25,13 @@
   "devDependencies": {
     "@types/kafkajs": "^1.9.0",
     "@types/node": "^18.7.14",
+    "prisma": "^4.12.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@prisma/client": "^4.12.0",
+    "dotenv": "^16.0.3",
     "kafkajs": "^2.2.0"
   }
 }
