@@ -105,3 +105,7 @@ dist
 
 # Visual Studio local files 
 .vs/
+
+# prisma files - for a while
+client/
+migrations/
