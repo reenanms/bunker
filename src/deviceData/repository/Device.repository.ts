@@ -1,12 +1,12 @@
 
 
-import { PrismaClient } from "../../SQL/prisma/client";
+import { PrismaClient as PrismaSQL, DeviceModel } from "../../SQL/prisma/client";
 import { AlreadyRegisteredError } from "../../basic/error/AlreadyRegisteredError";
 import { Device } from "../entity/Device";
-import { DeviceModel } from "../entity/DeviceModel";
+
 
 export class DeviceRepository {
-  constructor(readonly prisma: PrismaClient) { }
+  constructor(readonly prisma: PrismaSQL) { }
 
   public async getDeviceSchemaName(deviceId: string) : Promise<string> {
     const device = await this.prisma.device
@@ -27,11 +27,7 @@ export class DeviceRepository {
       throw new AlreadyRegisteredError();
 
     await this.prisma.deviceModel.create({
-      data: {
-        id: deviceModel.id,
-        description: deviceModel.description,
-        dataTypeName: deviceModel.schema.name
-      }
+      data: deviceModel
     });
   }
 

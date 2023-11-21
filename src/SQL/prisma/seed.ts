@@ -1,4 +1,4 @@
-import { BasicTypes, DataTypes, PrismaClient } from './client'
+import { PrismaClient, BasicTypes, DataTypes } from './client'
 
 
 async function seedUsers(prisma: PrismaClient) {

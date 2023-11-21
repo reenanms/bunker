@@ -4,6 +4,7 @@ import { DataTypeArray } from "../entity/DataTypeArray"
 import { DataTypeBasic } from "../entity/DataTypeBasic"
 import { DataTypeObject } from "../entity/DataTypeObject"
 
+
 export class SchemaObjectValidator {
   constructor(readonly schema: DataSchema) { }
 
@@ -76,4 +77,3 @@ export class SchemaObjectValidator {
     }
   }
 }
-

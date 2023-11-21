@@ -7,7 +7,7 @@
     "start-server": "docker-compose up -d",
     "stop-server": "docker-compose down",
     "sql-migrate": "prisma migrate dev --name init --schema ./src/SQL/prisma/schema.prisma",
-    "sql-seed": "node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./src/SQL/prisma/seed.ts",
+    "sql-seed": "ts-node src/SQL/prisma/seed.ts",
     "sql-debug": "ts-node ./src/SQL/index.ts --watch",
     "nosql-migrate": "prisma generate --schema ./src/noSQL/prisma/schema.prisma",
     "nosql-debug": "node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./src/noSQL/index.ts",

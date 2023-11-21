@@ -1,52 +1,24 @@
-import { PrismaClient } from "../../src/SQL/prisma/client";
-import { Device } from "../../src/deviceData/entity/Device";
-import { DeviceModel } from "../../src/deviceData/entity/DeviceModel";
+import { DeviceRepository } from "../../src/deviceData/repository/Device.repository";
+import { DataSchemaFactory } from "../../src/deviceData/factory/DataSchema.factory";
+import { DeviceFactory } from "../../src/deviceData/factory/Device.factory";
 
-/*
+
 export class DataConsistency {
-  static async deviceModel(prisma: PrismaClient, deviceModel: DeviceModel) {
-    const foundItens = await prisma.deviceModel.findMany({
-      where: {
-        id: deviceModel.id
-      }
-    });
-
-    if (foundItens.length > 0)
-      return;
-
-    await prisma.deviceModel.create({
-      data: {
-        id: deviceModel.id,
-        description: deviceModel.description,
-        dataType: {
-          connect: {
-            name: deviceModel.schema.name
-          }
-        }
-      }
-    });
+  static async getDeviceWithIntegerData(deviceRepository: DeviceRepository) {
+    const integerScheme = DataSchemaFactory.createInteger();
+    const deviceModel = DeviceFactory.createDeviceModel("deviceModelTest", "deviceModelTest", integerScheme);
+    const device = DeviceFactory.createDevice("deviceTest", deviceModel);
+    const { schema, ...offalDevice } = device.model;
+    const prismaDevice = { dataTypeName: schema.name, ...offalDevice };
+  
+    try {
+      await deviceRepository.createDeviceModel(prismaDevice);
+      await deviceRepository.createDevice(device);
+    } catch (e) {
+      console.log(e);
+    }
+  
+    return device;
   }
-
-  static async device(prisma: PrismaClient, device: Device) {
-    const foundItens = await prisma.device.findMany({
-      where: {
-        id: device.id
-      }
-    });
-
-    if (foundItens.length > 0)
-      return;
-
-    await prisma.device.create({
-      data: {
-        id: device.id,
-        deviceModel: {
-          connect: {
-            id: device.model.id
-          }
-        }
-      }
-    });
-  }
+  
 }
-*/

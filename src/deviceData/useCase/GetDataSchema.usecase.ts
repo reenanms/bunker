@@ -1,17 +1,18 @@
-import prisma, { DataTypes, BasicTypes } from "../../SQL/prisma/client";
+import { DataTypes, BasicTypes } from "../../SQL/prisma/client";
 import { DataSchema, DataType } from "../entity/DataSchema";
 import { DataTypeObject } from "../entity/DataTypeObject";
 import { DataTypeArray } from "../entity/DataTypeArray";
 import { BasicType, DataTypeBasic } from "../entity/DataTypeBasic";
 import { DataSchemaRepository } from "../repository/DataSchema.repository";
 
+
 export class GetDataSchemaUseCase {
   constructor(
     readonly repository: DataSchemaRepository
   ) { }
 
-  public async run(dataTypeName: string): Promise<DataSchema> {
-    return await this.getSchema(dataTypeName);
+  public async run(schemaName: string): Promise<DataSchema> {
+    return await this.getSchema(schemaName);
   }
 
   private async getSchema(name: string): Promise<DataSchema> {
@@ -26,7 +27,7 @@ export class GetDataSchemaUseCase {
     };
   }
 
-  private async getDefinitions(dataType: prisma.DataTypes, parentDataTypeName: string): Promise<DataTypeObject[] | DataTypeArray | DataTypeBasic> {
+  private async getDefinitions(dataType: DataTypes, parentDataTypeName: string): Promise<DataTypeObject[] | DataTypeArray | DataTypeBasic> {
     switch (dataType) {
       case DataTypes.OBJECT:
         return await this.getDataTypeObject(parentDataTypeName);
@@ -73,7 +74,7 @@ export class GetDataSchemaUseCase {
     };
   }
 
-  private getDataType(dataType: prisma.DataTypes): DataType {
+  private getDataType(dataType: DataTypes): DataType {
     switch (dataType) {
       case DataTypes.OBJECT:
         return DataType.OBJECT;
@@ -84,7 +85,7 @@ export class GetDataSchemaUseCase {
     }
   }
 
-  private getBasicType(basicType: prisma.BasicTypes): BasicType {
+  private getBasicType(basicType: BasicTypes): BasicType {
     switch (basicType) {
       case BasicTypes.NO_QUOTES:
         return BasicType.NO_QUOTES;
