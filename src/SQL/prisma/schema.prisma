@@ -12,6 +12,7 @@ generator client {
 }
 
 
+//auth
 model User {
   username  String  @id
   password  String
@@ -33,4 +34,72 @@ model RoutePermission {
   gruop      Group @relation(fields: [gruopId], references: [id])
 
   @@id([gruopId, route, permission])
+}
+
+
+//devices
+model Device {
+  id             String       @id
+  deviceModelId  String
+  deviceModel    DeviceModel  @relation(fields: [deviceModelId], references: [id])
+}
+
+model DeviceModel {
+  id            String    @id
+  description   String
+  dataTypeName  String
+
+  dataType      DataType  @relation(fields: [dataTypeName], references: [name])
+  devices       Device[]
+}
+
+enum DataTypes {
+  OBJECT
+  ARRAY
+  BASIC
+}
+
+model DataType {
+  name                String          @id
+  dataType            DataTypes
+
+  deviceModels            DeviceModel[]
+  dataTypeObjectParent    DataTypeObject[]  @relation("dataTypeObject.parentDataType")
+  dataTypeObjectProperty  DataTypeObject[]  @relation("dataTypeObject.propertyDataType")
+  dataTypeArrayParent     DataTypeArray?    @relation("dataTypeArray.parentDataTypeName")
+  dataTypeArrayArray      DataTypeArray[]   @relation("dataTypeArray.arrayDataTypeName")
+  dataTypeBasic           DataTypeBasic?
+}
+
+model DataTypeObject {
+  parentDataTypeName        String
+  propertyName              String
+  propertyDataTypeName      String
+  regexValidator            String?
+
+  parentDataType            DataType  @relation(fields: [parentDataTypeName],   references: [name], name: "dataTypeObject.parentDataType")
+  propertyDataType          DataType  @relation(fields: [propertyDataTypeName], references: [name], name: "dataTypeObject.propertyDataType")
+
+  @@id([parentDataTypeName, propertyName])
+}
+
+model DataTypeArray {
+  parentDataTypeName  String  @id
+  arrayDataTypeName   String
+
+  parentDataType     DataType  @relation(fields: [parentDataTypeName],  references: [name], name: "dataTypeArray.parentDataTypeName")
+  arrayDataType      DataType  @relation(fields: [arrayDataTypeName],   references: [name], name: "dataTypeArray.arrayDataTypeName")
+}
+
+enum BasicTypes {
+  QUOTES
+  NO_QUOTES
+}
+
+model DataTypeBasic {
+  parentDataTypeName  String      @id
+  basicType           BasicTypes
+  regexValidator      String
+
+  parentDataType      DataType    @relation(fields: [parentDataTypeName],   references: [name])
 }

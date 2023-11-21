@@ -11,7 +11,8 @@ generator client {
   output = "./client"
 }
 
-model example {
-  id    String  @id @default(auto()) @map("_id") @db.ObjectId
-  name  String
+model DeviceData {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  deviceId    String
+  data        String
 }

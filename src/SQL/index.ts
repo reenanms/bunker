@@ -43,9 +43,6 @@ async function main(prisma: PrismaClient) {
 
   const hasAccess = await userHasAccess(prisma, validatedAuth!.username, routeToAccess, permissionNecessary);
   console.log(user, routeToAccess, permissionNecessary, hasAccess);
-  
-
-
 }
 
 {
