@@ -10,7 +10,7 @@ export class DeviceRepository {
 
   public async getDeviceSchemaName(deviceId: string) : Promise<string> {
     const device = await this.prisma.device
-                            .findUnique({
+                            .findUniqueOrThrow({
                               where: { id: deviceId },
                               include: { deviceModel: true }
                             });

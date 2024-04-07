@@ -6,13 +6,18 @@
   "scripts": {
     "start-server": "docker-compose up -d",
     "stop-server": "docker-compose down",
+    "sql-generate": "prisma generate --schema ./src/SQL/prisma/schema.prisma",
     "sql-migrate": "prisma migrate dev --name init --schema ./src/SQL/prisma/schema.prisma",
     "sql-seed": "ts-node src/SQL/prisma/seed.ts",
     "sql-debug": "ts-node ./src/SQL/index.ts --watch",
-    "nosql-migrate": "prisma generate --schema ./src/noSQL/prisma/schema.prisma",
+    "nosql-generate": "prisma generate --schema ./src/noSQL/prisma/schema.prisma",
     "nosql-debug": "node --experimental-specifier-resolution=node --no-warnings --loader ts-node/esm ./src/noSQL/index.ts",
     "test-unit": "jest --watch --config jest.unit.config.js",
-    "test-integration": "jest --watch --config jest.integration.config.js"
+    "test-integration": "jest --config jest.integration.config.js",
+    "debug": "ts-node ./src/index.ts --watch",
+    "debug-sender": "ts-node ./src/basic/communication/use-sample.ts --watch",
+    "build": "tsc -p tsconfig.json",
+    "post-build": "cpy ./src/**/prisma/client/**/*.js ./dist && cpy ./src/**/prisma/client/**/*.prisma ./dist"
   },
   "repository": {
     "type": "git",
@@ -25,6 +30,7 @@
   },
   "homepage": "https://github.com/reenanms/bunker#readme",
   "devDependencies": {
+    "cpy-cli": "^5.0.0",
     "@types/jest": "^29.5.2",
     "@types/kafkajs": "^1.9.0",
     "@types/node": "^18.7.14",
@@ -32,12 +38,12 @@
     "prisma": "^4.12.0",
     "ts-jest": "^29.1.0",
     "ts-node": "^10.9.1",
-    "typescript": "^4.7.4"
+    "typescript": "^4.9.3",
+    "dotenv": "^16.0.3"
   },
   "dependencies": {
     "@prisma/client": "^4.12.0",
     "@types/jsonwebtoken": "^9.0.2",
-    "dotenv": "^16.0.3",
     "jsonwebtoken": "^9.0.0",
     "kafkajs": "^2.2.0"
   }

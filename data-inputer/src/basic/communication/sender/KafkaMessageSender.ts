@@ -1,17 +1,17 @@
 import { Kafka, Partitioners } from 'kafkajs';
-import { MessageSender } from './MessageSender';
+import { MessageSender, MessageSenderConfig } from './MessageSender';
 
 
 export class KafkaMessageSender implements MessageSender {
 	private kafka: Kafka;
 	private topic: string;
 
-	constructor(id: string, brokers: string[], topic: string) {
+	constructor(config: MessageSenderConfig) {
 		this.kafka = new Kafka({
-			clientId: id,
-			brokers: brokers,
+			clientId: config.id,
+			brokers: config.brokers,
 		});
-		this.topic = topic;
+		this.topic = config.topic;
 	}
 
 	async SendMessage(message: string): Promise<void> {
