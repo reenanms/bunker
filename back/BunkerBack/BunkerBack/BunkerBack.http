@@ -1,0 +1,6 @@
+@BunkerBack_HostAddress = http://localhost:5244
+
+GET {{BunkerBack_HostAddress}}
+Accept: application/json
+
+###
