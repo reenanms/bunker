@@ -1,27 +1,30 @@
 import { Kafka, Consumer } from 'kafkajs';
-import { MessageReceiver } from './MessageReceiver';
+import { MessageReceiver, MessageReceiverConfig } from './MessageReceiver';
 
 
 export class KafkaMessageReceiver implements MessageReceiver {
 	private kafka: Kafka;
-	private topic: string;
+	private config: MessageReceiverConfig;
 	private consumer: Consumer;
 
-	constructor(id: string, brokers: string[], topic: string) {
+	constructor(config: MessageReceiverConfig) {
 		this.kafka = new Kafka({
-			clientId: id,
-			brokers: brokers,
+			clientId: config.id,
+			brokers: config.brokers,
 		});
-		this.consumer = this.kafka.consumer({ groupId: topic /*, partitionAssigners: undefined*/ });;
-		this.topic = topic;
+		this.consumer = this.kafka.consumer({ groupId: config.topic /*, partitionAssigners: undefined*/ });;
+		this.config = config;
 	}
 
-	async Start(callback: (message: string) => void): Promise<void> {
+	async Start(callback: (config: MessageReceiverConfig, message: string) => void): Promise<void> {
 		//https://github.com/tulios/kafkajs/issues/260
 		await this.consumer.connect();
-		await this.consumer.subscribe({ topic: this.topic, fromBeginning: true });
+		await this.consumer.subscribe({ topic: this.config.topic, fromBeginning: false });
 		await this.consumer.run({
-			eachMessage: async ({ message }) => callback(`${message.value}`)
+			eachMessage: async ({ message, heartbeat }) => {
+				await callback(this.config, `${message.value}`);
+				await heartbeat();
+			}
 		}
 		);
 	}

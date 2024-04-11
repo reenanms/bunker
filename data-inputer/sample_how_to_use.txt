@@ -1,3 +1,18 @@
+NETWORK TOOL LINUX:
+apt-get update
+apt-get install net-tools
+apt-get install inetutils-ping
+
+hostname -f
+
+---------------------------------------------------------------------------------------------------------
+
+KAFKA COMMANDS:
+kafka-topics --bootstrap-server broker-1:29092 --describe --topic bunker.device.data
+
+---------------------------------------------------------------------------------------------------------
+
+CODE SAMPLE 1:
 import { UserPermission } from '../basic/auth/UserPermission';
 import { UserPermissionService } from '../basic/auth/UserPermissionService';
 import { PrismaClient } from './prisma/client'
@@ -57,3 +72,49 @@ async function main(prisma: PrismaClient) {
       process.exit(1)
     });
 }
+
+
+---------------------------------------------------------------------------------------------------------
+
+SAMPLE CODE 2 (SEND DATA):
+
+/****
+#create
+docker exec broker kafka-topics --bootstrap-server broker:9092 --create --topic quickstart
+
+#send
+docker exec --interactive --tty broker kafka-console-producer --bootstrap-server broker:9092 --topic quickstart
+
+#receive
+docker exec --interactive --tty broker kafka-console-consumer --bootstrap-server broker:9092 --topic quickstart --from-beginning
+****/
+
+
+import { MessageSenderFactory } from "./sender/MessageSenderFactory";
+//import { MessageReceiverFactory } from "./receiver/MessageReceiverFactory";
+
+
+async function main() {
+  const config = {
+    id: 'sender-1',
+    brokers: ['localhost:9092'],
+    topic: "bunker.device.data"
+  }
+
+  const sender = MessageSenderFactory.Create(config);
+
+  for(let i = 0; i < 10; i++)
+  {
+    await sender.SendMessage(`{ "deviceId": "deviceTest", "data": ${i} }`);
+  }
+
+  //const receiver = MessageReceiverFactory.Create(config);
+  //await receiver.Start( m => console.log(`received: ${m}`));
+}
+
+main()
+  .then()
+  .catch(async (e) => {
+    console.error(e);
+    process.exit(1);
+  });
