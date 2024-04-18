@@ -1,4 +1,4 @@
-import { InvalidMatchSchemaError } from "../../basic/error/InvalidMatchSchemaError"
+import { InvalidMatchSchemaError } from "../../common/error/InvalidMatchSchemaError"
 import { DataSchema, DataType } from "../entity/DataSchema"
 import { DataTypeArray } from "../entity/DataTypeArray"
 import { DataTypeBasic } from "../entity/DataTypeBasic"
@@ -30,7 +30,7 @@ export class SchemaObjectValidator {
 
   private validateBasicType(schema: DataSchema, obj: any) {
     if (Array.isArray(obj))
-      throw new InvalidMatchSchemaError(schema, obj);
+      throw new InvalidMatchSchemaError(schema.name, obj);
 
     const dataTypeBasic = schema.definition as DataTypeBasic;
     this.validateObjectMatchRegex(schema, dataTypeBasic.regexValidator, obj);
@@ -42,12 +42,12 @@ export class SchemaObjectValidator {
 
     const regEx = new RegExp(regexString);
     if (!regEx.test(obj))
-      throw new InvalidMatchSchemaError(schema, obj);
+      throw new InvalidMatchSchemaError(schema.name, obj);
   }
 
   private validateArrayType(schema: DataSchema, obj: any) {
     if (!Array.isArray(obj))
-      throw new InvalidMatchSchemaError(schema, obj);
+      throw new InvalidMatchSchemaError(schema.name, obj);
 
     const dataTypeBasic = schema.definition as DataTypeArray;
     const arrayItems = obj as any[];
@@ -58,7 +58,7 @@ export class SchemaObjectValidator {
 
   private validateObjectType(schema: DataSchema, obj: any) {
     if (Array.isArray(obj))
-      throw new InvalidMatchSchemaError(schema, obj);
+      throw new InvalidMatchSchemaError(schema.name, obj);
 
     const dataTypeObjects = schema.definition as DataTypeObject[];
     const objectProperties = obj as Record<string, any>;
@@ -70,7 +70,7 @@ export class SchemaObjectValidator {
     for (const typeObject of dataTypeObjects) {
       const property = objectProperties[typeObject.propertyName]
       if (property == null)
-        throw new InvalidMatchSchemaError(schema, obj)
+        throw new InvalidMatchSchemaError(schema.name, obj)
 
       this.validateObjectMatchRegex(schema, typeObject.regexValidator, obj)
       this.validateSchema(typeObject.propertyDataType, property)

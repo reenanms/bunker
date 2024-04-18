@@ -1,0 +1,182 @@
+---
+version: '3'
+services:
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.6.0
+    container_name: zookeeper
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+
+  broker-1:
+    container_name: broker-1
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build: ./docker-files/kafka
+    ports:
+    # To learn about configuring Kafka for access across networks see
+    # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
+      - "9092:9092"
+      - "29092:29092"
+    depends_on:
+      zookeeper:
+        condition: service_started
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker-1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 #just when there is one broker
+      #ALLOW_PLAINTEXT_LISTENER=yes
+      #KAFKA_LISTENERS: LISTENER_INPUTER://broker:9092,LISTENER_INTERNAL://localhost:29092
+      #KAFKA_SSL_CLIENT_AUTH=required
+      #ALLOW_PLAINTEXT_LISTENER=yes
+      #KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME=false
+
+
+  #infos: https://stackoverflow.com/questions/64865361/docker-compose-create-kafka-topics
+  broker-init:
+    container_name: broker-init
+    networks: 
+      - netbroker
+    #restart: unless-stopped
+    build: ./docker-files/kafka
+    depends_on:
+      - broker-1
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server broker-1:29092 --list
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --bootstrap-server broker-1:29092 --create --if-not-exists --topic bunker.device.data --replication-factor 1 --partitions 2 
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server broker-1:29092 --list
+      "
+
+
+  postgres:
+    image: postgres
+    container_name: postgres
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    #volumes:
+    #  - ./database/script.sql:/docker-entrypoint-initdb.d/script.sql
+    environment:
+      POSTGRES_PASSWORD: "Postgres2022!"
+    ports:
+      - "5432:5432"
+
+
+  mongo:
+    container_name: mongo
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build: ./docker-files/mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_REPLICA_HOST: host.docker.internal
+      MONGO_REPLICA_PORT: 27018
+    ports:
+      - '27018:27018'
+
+
+  inputer-init:
+    container_name: inputer-init
+    networks: 
+      - netbroker
+    #restart: unless-stopped
+    build:
+      context: ./data-inputer
+    depends_on:
+      postgres:
+        condition: service_started
+      mongo:
+        condition: service_started
+    environment:
+      SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
+      NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      npm run sql-migrate
+      npm run sql-seed
+      "
+
+
+  inputer-1:
+    container_name: inputer-1
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./data-inputer
+    depends_on:
+      broker-init:
+          condition: service_completed_successfully
+      inputer-init:
+        condition: service_completed_successfully
+    environment:
+      SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
+      NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
+      MESSAGER_ID: inputer-1
+      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
+
+
+  inputer-2:
+    container_name: inputer-2
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./data-inputer
+    depends_on:
+      broker-init:
+          condition: service_completed_successfully
+      inputer-init:
+        condition: service_completed_successfully
+    environment:
+      SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
+      NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
+      MESSAGER_ID: inputer-2
+      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
+
+
+  inputer-proxy-rest:
+    container_name: inputer-proxy-rest
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./data-inputer-rest-proxy
+    depends_on:
+      inputer-1:
+        condition: service_started
+      inputer-2:
+        condition: service_started
+    environment:
+      MESSAGER_ID: sender-proxy-rest
+      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
+      TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
+      TOKEN_EXPIRES_IN_HOURS: 6
+    ports:
+      - '80:3000'
+
+
+networks:
+  netbroker:
+    name: netbroker

@@ -1,5 +1,5 @@
 import { SchemaObjectValidator } from "../../../src/deviceData/validator/SchemaObject.validator"
-import { InvalidMatchSchemaError } from "../../../src/basic/error/InvalidMatchSchemaError"
+import { InvalidMatchSchemaError } from "../../../src/common/error/InvalidMatchSchemaError"
 import { DataSchemaFactory } from "../../../src/deviceData/factory/DataSchema.factory"
 
 

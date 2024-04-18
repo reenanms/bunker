@@ -13,10 +13,10 @@ kafka-topics --bootstrap-server broker-1:29092 --describe --topic bunker.device.
 ---------------------------------------------------------------------------------------------------------
 
 CODE SAMPLE 1:
-import { UserPermission } from '../basic/auth/UserPermission';
-import { UserPermissionService } from '../basic/auth/UserPermissionService';
+import { UserPermission } from '../common/auth/UserPermission';
+import { UserPermissionService } from '../common/auth/UserPermissionService';
 import { PrismaClient } from './prisma/client'
-import { AuthService } from '../basic/auth/AuthService';
+import { AuthService } from '../common/auth/AuthService';
 
 
 async function getUserPermissions(prisma: PrismaClient, username: string) : Promise<UserPermission[]> {
