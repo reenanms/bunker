@@ -1,4 +1,4 @@
-import { MessageReceiverFactory } from "./basic/communication/receiver/MessageReceiverFactory";
+import { MessageReceiverFactory } from "./common/communication/receiver/MessageReceiverFactory";
 import { CreateDeviceDataUseCase } from "./deviceData/useCase/CreateDeviceData.usecase";
 import { PrismaClient as PrismaSQL } from "./SQL/prisma/client";
 import { PrismaClient as PrismaNoSQL } from "./noSQL/prisma/client";
@@ -6,9 +6,9 @@ import { DataSchemaRepository } from "./deviceData/repository/DataSchema.reposit
 import { DeviceRepository } from "./deviceData/repository/Device.repository";
 import { DeviceDataRepository } from "./deviceData/repository/DeviceData.repository";
 import { DeviceData } from "./deviceData/entity/DeviceData";
-import { MessageReceiverConfig } from "./basic/communication/receiver/MessageReceiver";
-import { BaseError } from "./basic/error/BaseError";
-import { MessageSenderConfig } from "./basic/communication/sender/MessageSender";
+import { MessageReceiverConfig } from "./common/communication/receiver/MessageReceiver";
+import { BaseError } from "./common/error/BaseError";
+import { MessageSenderConfig } from "./common/communication/sender/MessageSender";
 //import envs from envs;
 
 

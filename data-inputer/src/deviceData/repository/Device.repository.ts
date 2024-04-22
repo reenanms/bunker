@@ -1,7 +1,7 @@
 
 
 import { PrismaClient as PrismaSQL, DeviceModel } from "../../SQL/prisma/client";
-import { AlreadyRegisteredError } from "../../basic/error/AlreadyRegisteredError";
+import { AlreadyRegisteredError } from "../../common/error/AlreadyRegisteredError";
 import { Device } from "../entity/Device";
 
 
