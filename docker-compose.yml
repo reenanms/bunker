@@ -45,7 +45,7 @@ services:
     container_name: broker-init
     networks: 
       - netbroker
-    #restart: unless-stopped
+    #restart: no
     build: ./docker-files/kafka
     depends_on:
       - broker-1
@@ -96,7 +96,7 @@ services:
     container_name: inputer-init
     networks: 
       - netbroker
-    #restart: unless-stopped
+    #restart: no
     build:
       context: ./data-inputer
     depends_on:
@@ -155,8 +155,8 @@ services:
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
 
 
-  inputer-proxy-rest:
-    container_name: inputer-proxy-rest
+  inputer-proxy-rest-1:
+    container_name: inputer-proxy-rest-1
     networks: 
       - netbroker
     restart: unless-stopped
@@ -168,7 +168,7 @@ services:
       inputer-2:
         condition: service_started
     environment:
-      MESSAGER_ID: sender-proxy-rest
+      MESSAGER_ID: sender-rest-1
       MESSAGER_BROKERS: host.docker.internal:29092
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
       TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
@@ -176,6 +176,51 @@ services:
     ports:
       - '80:3000'
 
+
+  mqtt-broker-1:
+    image: emqx:latest
+    container_name: mqtt-broker-1
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    environment:
+      EMQX_NAME: mqtt1
+      EMQX_HOST: node1.mqtt.io
+      EMQX_CLUSTER__DISCOVERY_STRATEGY: static
+      EMQX_CLUSTER__STATIC__SEEDS: '[mqtt1@node1.mqtt.io]'
+    ports:
+      - '1883:1883'
+      - '8083:8083'
+      - '8084:8084'
+      - '8883:8883'
+      - '18083:18083'
+
+  inputer-proxy-mqtt-1:
+    container_name: inputer-proxy-mqtt-1
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./data-inputer-mqtt-proxy
+    depends_on:
+      inputer-1:
+        condition: service_started
+      inputer-2:
+        condition: service_started
+      mqtt-broker-1:
+        condition: service_started
+    environment:
+      MESSAGER_ID: sender-mqtt-1
+      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
+      TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
+      TOKEN_EXPIRES_IN_HOURS: 6
+      MQTT_ID: sender-mqtt-1
+      MQTT_URL: mqtt://host.docker.internal
+      MQTT_USERNAME:
+      MQTT_PASSWORD:
+      MQTT_TOPIC_DEVICE_DATA: mqtt.device.data
+    
 
 networks:
   netbroker:

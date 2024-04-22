@@ -9,7 +9,7 @@ import { DeviceData } from "./deviceData/entity/DeviceData";
 import { MessageReceiverConfig } from "./common/communication/receiver/MessageReceiver";
 import { BaseError } from "./common/error/BaseError";
 import { MessageSenderConfig } from "./common/communication/sender/MessageSender";
-//import envs from envs;
+import envs from "dotenv";
 
 
 function errorHandler(error: unknown) {
@@ -52,12 +52,6 @@ async function endless() {
 
 function getDeviceDataTopicConfig() : MessageReceiverConfig | MessageSenderConfig
 {
-  // const config = {
-  //   id: envs("MESSAGER_ID"),
-  //   brokers: envs("MESSAGER_BROKERS").split(","),
-  //   topic: envs("MESSAGER_TOPIC_DEVICE_DATA"),
-  // };
-
   const config = {
     id: process.env.MESSAGER_ID!,
     brokers: process.env.MESSAGER_BROKERS!.split(","),
@@ -67,6 +61,8 @@ function getDeviceDataTopicConfig() : MessageReceiverConfig | MessageSenderConfi
 }
 
 async function main() {
+  envs.config();
+
   const config = getDeviceDataTopicConfig();
   const receiver = MessageReceiverFactory.Create(config);
   await receiver.Start(messageHandler);

@@ -19,7 +19,7 @@ export type DataToSend = {
 
 @Injectable()
 export class AppService {
-  getConfig() {
+  private getConfig() {
     const config = {
       id: process.env.MESSAGER_ID,
       brokers: process.env.MESSAGER_BROKERS.split(","),
