@@ -16,10 +16,10 @@ namespace BunkerDatabase.Queries
             connection = databaseConnector.Connect();
         }
 
-        public async Task<bool> VerifyLogin(string email, string password)
+        public async Task<Users> VerifyLogin(string email, string password)
         {
-            var users = await connection.QueryAsync<Users>("SELECT * FROM Users WHERE Email = @email AND password = @password", new { email, password });
-            return users.Any();
+            var users = await connection.QuerySingleAsync<Users>("SELECT * FROM Users WHERE Email = @email AND password = @password", new { email, password });
+            return users;
         }
     }
 }

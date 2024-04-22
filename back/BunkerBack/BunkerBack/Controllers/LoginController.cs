@@ -17,7 +17,7 @@ namespace BunkerBack.Controllers
         }
 
         [AllowAnonymous]
-        [HttpGet("get-verify")]
+        [HttpGet("get-login-verify")]
         public async Task<IActionResult> VerifyLogin([FromQuery] VerifyLoginCommand command)
         {
             var response = await mediator.Send(command);

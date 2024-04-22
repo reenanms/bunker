@@ -1,4 +1,5 @@
-﻿using BunkerDomain.Commands;
+﻿using BunkerDatabase.Models;
+using BunkerDomain.Commands;
 using BunkerDomain.Handlers;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,7 +13,7 @@ namespace BunkerDomain
             if (services == null)
                 throw new ArgumentNullException(nameof(services));
 
-            services.AddScoped<IRequestHandler<VerifyLoginCommand, bool>, VerifyLoginHandle>();
+            services.AddScoped<IRequestHandler<VerifyLoginCommand, Users>, VerifyLoginHandle>();
         }
     }
 }

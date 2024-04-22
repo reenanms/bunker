@@ -1,7 +1,9 @@
-﻿namespace BunkerDatabase.InterfacesQueries
+﻿using BunkerDatabase.Models;
+
+namespace BunkerDatabase.InterfacesQueries
 {
     public interface ILogin
     {
-        Task<bool> VerifyLogin(string email, string password);
+        Task<Users> VerifyLogin(string email, string password);
     }
 }
