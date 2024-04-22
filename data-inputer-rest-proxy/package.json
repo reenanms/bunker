@@ -1,10 +1,9 @@
 {
-  "name": "bunker-api",
-  "version": "0.0.1",
+  "name": "data-inputer-rest-proxy",
+  "version": "1.0.0",
   "description": "",
   "author": "",
-  "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
