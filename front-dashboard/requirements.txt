@@ -1,0 +1,7 @@
+altair
+pandas
+streamlit
+numpy
+pymongo
+python-dotenv
+jsonpath-ng

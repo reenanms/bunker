@@ -1,0 +1,61 @@
+
+[
+  [
+    {
+      "size": 1,
+      "colletion": "tmp",
+      "filter": {"temp.kelvins": { "$gt": 200} },
+      "chartType": "LINE",
+      "chartDefinition": {
+        "x": {
+          "description": "Data e hora",
+          "jPath": "$.date"
+        },
+        "y": {
+          "description": "Tempertura (C)",
+          "jPath": "$.temp.celsius"
+        }
+      }
+    },
+    {
+      "size": 2,
+      "colletion": "tmp",
+      "filter": {"temp.kelvins": { "$gt": 200} },
+      "chartType": "BAR",
+      "chartDefinition": {
+        "x": {
+          "description": "Data e hora",
+          "jPath": "$.date"
+        },
+        "y": {
+          "description": "Tempertura (C)",
+          "jPath": "$.temp.celsius"
+        },
+        "color": {
+          "description": "Sao Leopoldo"
+        }
+      }
+    }
+  ],
+  [
+    {
+      "size": 1,
+      "colletion": "tmp",
+      "filter": {"temp.kelvins": { "$gt": 200} },
+      "chartType": "AREA",
+      "chartDefinition": {
+        "y": {
+          "description": "Data e hora",
+          "jPath": "$.date"
+        },
+        "x": {
+          "description": "Tempertura (C)",
+          "jPath": "$.temp.celsius"
+        },
+        "color": {
+          "description": "Legend"
+        }
+      }
+    }
+  ]
+]
