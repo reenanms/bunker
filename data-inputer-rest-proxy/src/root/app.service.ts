@@ -1,15 +1,5 @@
-import {
-  //Body,
-  //Controller,
-  //Get,
-  //HttpCode,
-  //HttpStatus,
-  //Post,
-  //Request,
-  //UseGuards,
-  Injectable,
-} from "@nestjs/common";
-import { MessageSenderFactory } from "../common/communication/sender/MessageSenderFactory";
+import { Injectable } from "@nestjs/common";
+import { MessageSenderFactory } from "common-core/common/communication/sender/MessageSenderFactory";
 //import { AuthGuard } from "../auth.guard";
 
 export type DataToSend = {

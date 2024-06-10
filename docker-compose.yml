@@ -92,13 +92,22 @@ services:
       - '27018:27018'
 
 
-  inputer-init:
-    container_name: inputer-init
+  common-core-image-build:
+    image: common-core-image:latest
+    container_name: common-core-image-build
+    networks: 
+      - netbroker
+    build:
+      context: ./common-core
+
+
+  database-init:
+    container_name: database-init
     networks: 
       - netbroker
     #restart: no
     build:
-      context: ./data-inputer
+      context: ./common-core
     depends_on:
       postgres:
         condition: service_started
@@ -125,7 +134,7 @@ services:
     depends_on:
       broker-init:
           condition: service_completed_successfully
-      inputer-init:
+      database-init:
         condition: service_completed_successfully
     environment:
       SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
@@ -145,7 +154,7 @@ services:
     depends_on:
       broker-init:
           condition: service_completed_successfully
-      inputer-init:
+      database-init:
         condition: service_completed_successfully
     environment:
       SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
@@ -168,13 +177,15 @@ services:
       inputer-2:
         condition: service_started
     environment:
+      SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
+      NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
       MESSAGER_ID: sender-rest-1
       MESSAGER_BROKERS: host.docker.internal:29092
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
       TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
       TOKEN_EXPIRES_IN_HOURS: 6
     ports:
-      - '80:3000'
+      - '3002:3000'
 
 
   mqtt-broker-1:
@@ -220,7 +231,55 @@ services:
       MQTT_USERNAME:
       MQTT_PASSWORD:
       MQTT_TOPIC_DEVICE_DATA: mqtt.device.data
+
+  front-dashboard:
+    container_name: front-dashboard
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./front-dashboard
+    depends_on:
+      mongo:
+          condition: service_started
+    environment:
+      NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
+    ports:
+      - '8081:8501'
     
+  controller-backend:
+    container_name: controller-backend
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./controller-backend
+    depends_on:
+      common-core-image-build:
+        condition: service_completed_successfully
+    environment:
+      SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
+      NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
+      TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
+      TOKEN_EXPIRES_IN_HOURS: 6
+    ports:
+      - '3010:3005'
+
+  controller-frontend:
+    container_name: controller-frontend
+    networks: 
+      - netbroker
+    restart: unless-stopped
+    build:
+      context: ./controller-frontend
+      args:
+        REACT_APP_BACKEND_URL: http://localhost:3010
+    depends_on:
+      controller-backend:
+        condition: service_started
+    
+    ports:
+      - '80:3000'
 
 networks:
   netbroker:

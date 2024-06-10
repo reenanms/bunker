@@ -1,6 +1,6 @@
 import { IClientOptions, IPublishPacket, MqttClient, OnMessageCallback, connect } from "mqtt"
-import { MessageSenderFactory } from "./common/communication/sender/MessageSenderFactory";
-import { MessageSenderConfig } from "./common/communication/sender/MessageSender";
+import { MessageSenderFactory } from "common-core/common/communication/sender/MessageSenderFactory";
+import { MessageSenderConfig } from "common-core/common/communication/sender/MessageSender";
 import envs from "dotenv";
 
 export type MqttWrapperConfig = {
