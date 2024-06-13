@@ -1,0 +1,46 @@
+{
+  "name": "common-core",
+  "version": "1.0.0",
+  "description": "Sistema centralizador de dados de IoT",
+  "main": "src/index.ts",
+  "scripts": {
+    "sql-generate": "prisma generate --schema ./src/SQL/prisma/schema.prisma",
+    "sql-migrate": "prisma migrate dev --name init --schema ./src/SQL/prisma/schema.prisma",
+    "sql-seed": "ts-node src/SQL/prisma/seed.ts",
+    "nosql-generate": "prisma generate --schema ./src/noSQL/prisma/schema.prisma",
+    "test-unit": "jest --watch --config jest.unit.config.js",
+    "test-integration": "jest --config jest.integration.config.js",
+    "debug": "tsc -p tsconfig.json --watch",
+    "build": "tsc -p tsconfig.json",
+    "post-build": "cpy ./**/prisma/**/* ../dist --cwd=./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/reenanms/bunker.git"
+  },
+  "author": "Renan Martins",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/reenanms/bunker/issues"
+  },
+  "homepage": "https://github.com/reenanms/bunker#readme",
+  "devDependencies": {
+    "@prisma/client": "^4.12.0",
+    "@types/jest": "^29.5.2",
+    "@types/jsonwebtoken": "^9.0.2",
+    "@types/kafkajs": "^1.9.0",
+    "@types/node": "^18.7.14",
+    "cpy-cli": "^5.0.0",
+    "jest": "^29.5.0",
+    "prisma": "^4.12.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.3",
+    "dotenv": "^16.0.3"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.0",
+    "kafkajs": "^2.2.0",
+    "tsyringe": "^4.8.0"
+  }
+}

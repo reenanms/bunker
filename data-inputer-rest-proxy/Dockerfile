@@ -1,4 +1,4 @@
-FROM node:21 as base
+FROM common-core-image:latest as app
 WORKDIR /home/node/app
 
 COPY package*.json ./
@@ -8,6 +8,7 @@ COPY ./src ./src
 RUN npm install
 RUN npm run build
 
-WORKDIR /home/node/app/dist
-CMD ["node","main.js"]
+WORKDIR /home/node/app
 
+EXPOSE 3000
+CMD ["npm", "run", "start:prod"]

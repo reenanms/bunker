@@ -6,9 +6,10 @@
   "license": "MIT",
   "main": "src/main.ts",
   "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
     "debug": "ts-node ./src/main.ts --watch",
     "build": "tsc -p tsconfig.json",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start:prod": "node dist/main"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
@@ -24,6 +25,7 @@
     "jsonwebtoken": "^9.0.2",
     "kafkajs": "^2.2.4",
     "mqtt": "^5.5.3",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "common-core": "file:../common-core/dist"
   }
 }
