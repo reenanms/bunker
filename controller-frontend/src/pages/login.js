@@ -1,33 +1,39 @@
 import React, { Component } from 'react';
 import authService from '../services/auth.service';
+import userService from '../services/user.service';
 import { Navigate } from "react-router-dom";
-
+import AuthRedirector from '../components/authRedirector'
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: "",
-            password: "",
+            userName: "admin",
+            password: "admin",
             redirectTo: null
         }
     }
 
     sendLogin = async (event) => {
         event.preventDefault();
-        let data = {
-            username: this.state.userName,
-            password: this.state.password
-        }
 
         try {
-            let res = await authService.authenticate(data);
-            authService.setLoggedUser(res.data);
+            const auth = await authService.authenticate(this.state.userName, this.state.password);
+            authService.setAuthData(auth);
+
+            const token = authService.getToken();
+            const user = await userService.getUser(token);
+            console.log(user);
+
             this.setState({ redirectTo: "/home" })
         } catch (error) {
-            console.log(error);
+            console.error(error);
             alert("Erro ao efetuar login.");
         }
+
+        window.location.reload();
     }
 
     render() {
@@ -40,29 +46,26 @@ class Login extends Component {
 
         return (
             <>
-                <div className="container">
-                    <div className="login-form">
-                        <form onSubmit={this.sendLogin}>
-                            <div>
-                                <label>Usuário</label>
-                                <input
-                                    type="text"
-                                    placeholder="Usuário"
-                                    value={this.state.userName}
-                                    onChange={e => this.setState({ userName: e.target.value })} />
-                            </div>
-                            <div>
-                                <label htmlFor="password">Senha</label>
-                                <input
-                                    type="password"
-                                    placeholder="Senha"
-                                    value={this.state.password}
-                                    onChange={e => this.setState({ password: e.target.value })} />
-                            </div>
-                            <button type="submit">Entrar</button>
-                        </form>
-                    </div>
-                </div>
+                <AuthRedirector whenLogged redirectTo="/home" />
+
+                <Form onSubmit={this.sendLogin}>
+                    <Form.Group className="mb-3" controlId="formBasicEmail">
+                        <Form.Label>Usuário</Form.Label>
+                        <Form.Control type="text"
+                                      placeholder="Usuário"
+                                      value={this.state.userName}
+                                      onChange={e => this.setState({ userName: e.target.value })} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="formBasicPassword">
+                        <Form.Label>Senha</Form.Label>
+                        <Form.Control type="password"
+                                      placeholder="Senha"
+                                      value={this.state.password}
+                                      onChange={e => this.setState({ password: e.target.value })} />
+                    </Form.Group>
+                    <Button variant="primary" type="submit">Entrar</Button>
+                </Form>
             </>
         )
     }

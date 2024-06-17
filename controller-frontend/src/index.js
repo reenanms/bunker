@@ -1,11 +1,19 @@
+//import 'bootstrap/dist/css/bootstrap.css';
+//import 'bootstrap'
+import './styles/styles.scss';
+
+// import 'bootstrap/js/dist/util';
+// import 'bootstrap/js/dist/dropdown';
+
+//import 'bootstrap/dist/css/bootstrap.min.css';
+//import '../node_modules/bootstrap/dist/css/bootstrap.min.css';
+
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+//import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-//import envs from 'dotenv';
-
-//envs.config();
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(

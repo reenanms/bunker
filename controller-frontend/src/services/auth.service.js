@@ -1,33 +1,40 @@
-import axios from 'axios';
+import restService from './rest.service';
 
-const authService = {
-    async authenticate(data) {
-        console.log("process.env:", process.env)
-        const apiUrl = process.env.REACT_APP_BACKEND_URL;
-        const endpoint = `${apiUrl}/auth`
-        return axios.post(endpoint, data);
+
+const StorageItems = {
+    token: "auth"
+}
+
+const service = {
+    async authenticate(username, password) {
+        let data = {
+            username,
+            password
+        };
+
+        return await restService.post('/auth', data);
     },
 
-    setLoggedUser(data) {
-        let parsedData = JSON.stringify(data)
-        localStorage.setItem("user", parsedData)
+    async authenticateRefresh(token) {
+        return await restService.put('/auth/refresh', null, token);
+    },
+
+    async authenticateDevice(token, deviceId) {
+        return await restService.put(`/auth/${deviceId}`, null, token);
+    },
+
+    setAuthData(data) {
+        localStorage.setItem(StorageItems.token, data.token);
     },
     
-    getLoggedUser() {
-        let data = localStorage.getItem("user");
-        if (!data) return null;
-        try {
-            let parsedData = JSON.parse(data)
-            return parsedData
-        } catch (error) {
-            console.log(error)
-            return null
-        }
+    getToken() {
+        let data = localStorage.getItem(StorageItems.token);
+        return data
     },
 
-    cleanLoggedUser() {
-        localStorage.clear();
+    cleanAuth() {
+        localStorage.removeItem(StorageItems.token);
     }
 }
 
-export default authService;
+export default service;
