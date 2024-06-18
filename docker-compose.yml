@@ -33,11 +33,6 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 #just when there is one broker
-      #ALLOW_PLAINTEXT_LISTENER=yes
-      #KAFKA_LISTENERS: LISTENER_INPUTER://broker:9092,LISTENER_INTERNAL://localhost:29092
-      #KAFKA_SSL_CLIENT_AUTH=required
-      #ALLOW_PLAINTEXT_LISTENER=yes
-      #KAFKA_ZOOKEEPER_TLS_VERIFY_HOSTNAME=false
 
 
   #infos: https://stackoverflow.com/questions/64865361/docker-compose-create-kafka-topics
@@ -273,7 +268,7 @@ services:
     build:
       context: ./controller-frontend
       args:
-        REACT_APP_BACKEND_URL: http://localhost:3010
+        REACT_APP_BACKEND_URL: http://${EXTERNAL_IP}:3010
     depends_on:
       controller-backend:
         condition: service_started

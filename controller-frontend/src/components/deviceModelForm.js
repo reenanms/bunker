@@ -35,10 +35,11 @@ class DeviceModelForm extends React.Component {
         schemaName: this.props.value.schemaName,
         description: this.props.value.description
       });
-      console.log("cancelClick.state:", this.state);
+
+      this.props.onCancel();
     }
 
-    saveClick = _ => {
+    saveClick = async _ => {
       const newData = {
         id: this.state.id,
         description: this.state.description,
@@ -48,20 +49,27 @@ class DeviceModelForm extends React.Component {
       const token = authService.getToken();
 
       if (this.state.newData)
-        deviceModelService.createDeviceModel(token, ...Object.values(newData));
+        await deviceModelService.createDeviceModel(token, ...Object.values(newData));
       else
-        deviceModelService.updateDeviceModel(token, ...Object.values(newData));
+        await deviceModelService.updateDeviceModel(token, ...Object.values(newData));
 
       this.setState({mode: Mode.View});
       this.props.onChange({ target: { value: newData, newData: false }});
     }
 
+    excluirClick = async _ => {
+      const token = authService.getToken();
+      await deviceModelService.deleteDeviceModel(token, this.state.id);
+      this.props.onDelete();
+    }
+
     renderButtons() {
       return (
         <>
-          <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.editClick}  >Editar</Button>
-          <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.cancelClick}  >Cancelar</Button>
+          <Button variant="danger"    style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.excluirClick}>Excluir</Button>
+          <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.editClick}>Editar</Button>
           <Button variant="primary"   style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.saveClick}>Savar</Button>
+          <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.cancelClick}  >Cancelar</Button>
         </>
       );
     }
