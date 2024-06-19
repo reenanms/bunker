@@ -7,11 +7,12 @@ import {
   Delete,
   Get,
   Put,
+  Request
 } from "@nestjs/common";
 import * as resolver from "common-core/resolver";
 import { CreateDeviceModelUseCase } from "common-core/deviceModel/useCase/CreateDeviceModel.usecase";
 import { DeleteDeviceModelUseCase } from "common-core/deviceModel/useCase/DeleteDeviceModel.usecase";
-import { GetAllDeviceModelsUseCase } from "common-core/deviceModel/useCase/GetAllDeviceModels.usecase";
+import { GetDeviceModelsByNameAndUsernameUseCase } from "common-core/deviceModel/useCase/GetDeviceModelsByNameAndUsername.usecase";
 import { GetDeviceModelUseCase } from "common-core/deviceModel/useCase/GetDeviceModel.usecase";
 import { UpdateDeviceModelUseCase } from "common-core/deviceModel/useCase/UpdateDeviceModel.usecase";
 import { DeviceModel } from "common-core/deviceModel/entity/DeviceModel";
@@ -23,15 +24,19 @@ export class DeviceModelController {
   constructor() {}
 
   @Get("/")
-  async getAllDeviceModels() {
-    const userCase = resolver.resolve(GetAllDeviceModelsUseCase);
-    return await userCase.run();
+  async getAllDeviceModels(@Request() request) {
+    const username = request.auth.username;
+    
+    const userCase = resolver.resolve(GetDeviceModelsByNameAndUsernameUseCase);
+    return await userCase.run({ username });
   }
 
   @Post("/")
-  async createDeviceModel(@Body() deviceModel: DeviceModel) {
+  async createDeviceModel(@Request() request, @Body() deviceModel: DeviceModel) {
+    deviceModel.username = request.auth.username;
+
     const userCase = resolver.resolve(CreateDeviceModelUseCase);
-    await userCase.run(deviceModel);
+    return await userCase.run(deviceModel);
   }
 
   @Delete("/:ID")
@@ -49,10 +54,13 @@ export class DeviceModelController {
   @Put("/:ID")
   async updateDeviceModel(
     @Param("ID") id: string,
+    @Request() request,
     @Body() deviceModel: DeviceModel,
   ) {
     deviceModel.id = id;
+    deviceModel.username = request.auth.username;
+
     const userCase = resolver.resolve(UpdateDeviceModelUseCase);
-    await userCase.run(deviceModel);
+    return await userCase.run(deviceModel);
   }
 }

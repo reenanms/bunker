@@ -21,7 +21,6 @@ class DeviceModelList extends React.Component {
         }
     }
 
-
     async componentDidMount() {
     }
 
@@ -67,9 +66,9 @@ class DeviceModelList extends React.Component {
     renderDeviceModelAccordion(deviceModel,index,onChange,onCancel,onDelete) {
         return (
             <>
-                <Accordion.Item key={index} eventKey={`${index}`}>
+                <Accordion.Item key={`${index}`} eventKey={`${index}`}>
                     <Accordion.Header>
-                        {index===-1 ? "<Inclusão de novo item>" : `${deviceModel.id}: ${deviceModel.description}`}
+                        {index===-1 ? "<Adicionando novo>" : `${deviceModel.name}: ${deviceModel.description}`}
                     </Accordion.Header>
                     <Accordion.Body>
                         <Row>
@@ -101,7 +100,7 @@ class DeviceModelList extends React.Component {
             );
 
         const newDeviceModel = {
-            id: "",
+            name: "",
             description: ""
         };
 

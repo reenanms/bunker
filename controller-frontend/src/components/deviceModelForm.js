@@ -18,6 +18,7 @@ class DeviceModelForm extends React.Component {
         mode: this.props.newData ? Mode.Edit : Mode.View,
         newData: this.props.newData,
         id: this.props.value.id,
+        name: this.props.value.name,
         schemaName: this.props.value.schemaName,
         description: this.props.value.description
       }
@@ -32,6 +33,7 @@ class DeviceModelForm extends React.Component {
         mode: Mode.View,
         newData: false,
         id: this.props.value.id,
+        name: this.props.value.name,
         schemaName: this.props.value.schemaName,
         description: this.props.value.description
       });
@@ -40,18 +42,30 @@ class DeviceModelForm extends React.Component {
     }
 
     saveClick = async _ => {
-      const newData = {
-        id: this.state.id,
-        description: this.state.description,
-        schemaName: this.state.schemaName,
-      };
+      
 
       const token = authService.getToken();
 
-      if (this.state.newData)
-        await deviceModelService.createDeviceModel(token, ...Object.values(newData));
-      else
-        await deviceModelService.updateDeviceModel(token, ...Object.values(newData));
+      let newData;
+      if (this.state.newData){
+        const dataToSend = {
+          name: this.state.name,
+          description: this.state.description,
+          schemaName: this.state.schemaName,
+        };
+
+        newData = await deviceModelService.createDeviceModel(token, ...Object.values(dataToSend));
+      }
+      else {
+        const dataToSend = {
+          id: this.state.id,
+          name: this.state.name,
+          description: this.state.description,
+          schemaName: this.state.schemaName,
+        };
+        
+        newData = await deviceModelService.updateDeviceModel(token, ...Object.values(dataToSend));
+      }
 
       this.setState({mode: Mode.View});
       this.props.onChange({ target: { value: newData, newData: false }});
@@ -80,7 +94,10 @@ class DeviceModelForm extends React.Component {
             <Form>
               <Form.Control name="id" placeholder="Identificador"
                             value={this.state.id} onChange={e => this.setState({ id: e.target.value })}
-                            disabled={!this.state.newData}/>
+                            disabled/>
+              <Form.Control name="name" placeholder="Nome"
+                            value={this.state.name} onChange={e => this.setState({ name: e.target.value })}
+                            disabled={this.state.mode === Mode.View}/>
               <Form.Select name="schemaName" placeholder="Tipo de dado"
                           value={this.state.schemaName} onChange={e => this.setState({ schemaName: e.target.value })}
                           disabled={this.state.mode === Mode.View}>

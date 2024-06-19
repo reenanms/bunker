@@ -4,11 +4,11 @@ import { DeviceModel } from "../../deviceModel/entity/DeviceModel";
 
 
 export class DeviceFactory {
-  static createDeviceModel(id: string, description: string, schema: DataSchema): DeviceModel {
-    return { id, description, schemaName: schema.name };
+  static createDeviceModel(id: string, name: string, description: string, username: string, schema: DataSchema): DeviceModel {
+    return { id, name, description, username, schemaName: schema.name };
   }
 
-  static createDevice(id: string, model: DeviceModel): Device {
-    return { id, deviceModelId: model.id };
+  static createDevice(id: string, name: string, model: DeviceModel): Device {
+    return { id, name, deviceModelId: model.id };
   }
 }

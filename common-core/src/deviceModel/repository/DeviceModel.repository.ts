@@ -1,18 +1,18 @@
 
 
-import { PrismaClient as PrismaSQL, DeviceModel } from "../../SQL/prisma/client";
-import { GenericCRUDRepository } from "../../common/repository/GenericCRUD.repository";
+import model from "../../SQL/prisma/client";
+import { GenericCRUDWithFilterRepository } from "../../common/repository/GenericCRUDWithFilter.repository";
 
 export type DeviceModelKey = {
-  id: string
+  id: string;
 };
 
-export class DeviceModelRepository extends GenericCRUDRepository<DeviceModel, DeviceModelKey> {
-  constructor(readonly prisma: PrismaSQL) {
+export class DeviceModelRepository extends GenericCRUDWithFilterRepository<model.DeviceModel, DeviceModelKey, model.Prisma.DeviceModelWhereInput> {
+  constructor(readonly prisma: model.PrismaClient) {
     super(prisma);
   }
 
-  protected getKey(data: DeviceModel): DeviceModelKey {
+  protected getKey(data: model.DeviceModel): DeviceModelKey {
     return { id: data.id };
   }
   
@@ -20,44 +20,3 @@ export class DeviceModelRepository extends GenericCRUDRepository<DeviceModel, De
     return this.prisma.deviceModel;
   }
 }
-
-// export class DeviceModelRepository {
-//   constructor(readonly prisma: PrismaSQL) { }
-
-//   public async createDeviceModel(deviceModel: DeviceModel) {
-//     const foundItens = await this.prisma.deviceModel
-//                         .findMany({ where: { id: deviceModel.id } });
-
-//     if (foundItens.length > 0)
-//       throw new AlreadyRegisteredError();
-
-//     await this.prisma.deviceModel.create({
-//       data: deviceModel
-//     });
-//   }
-
-//   public async readDeviceModel(deviceId: string) : Promise<string> {
-//     const device = await this.prisma.device
-//                             .findUniqueOrThrow({
-//                               where: { id: deviceId },
-//                               include: { deviceModel: true }
-//                             });
-
-//     const deviceModel = device!.deviceModel!;
-//     return deviceModel.dataTypeName;
-//   }
-
-//   public async getDeviceSchemaName(deviceId: string) : Promise<string> {
-//     const device = await this.prisma.device
-//                             .findUniqueOrThrow({
-//                               where: { id: deviceId },
-//                               include: { deviceModel: true }
-//                             });
-
-//     const deviceModel = device!.deviceModel!;
-//     return deviceModel.dataTypeName;
-//   }
-
-  
-
-// }

@@ -1,51 +1,58 @@
 import React, { Component } from 'react';
-import authService from '../services/auth.service';
-import userService from '../services/user.service';
-import { Navigate } from "react-router-dom";
 import AuthRedirector from '../components/authRedirector'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+
+import userService from '../services/user.service';
+
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            username: "admin",
-            password: "admin",
-            redirectTo: null
+            name: "",
+            username: "",
+            password: "",
+            success: false,
         }
     }
 
-    sendLogin = async (event) => {
+    createUser = async event => {
         event.preventDefault();
 
         try {
-            const auth = await authService.authenticate(this.state.username, this.state.password);
-            authService.setAuthData(auth);
+            await userService.createUser(this.state.name, this.state.username, this.state.password);
 
-            const token = authService.getToken();
-            await userService.getUser(token);
-
-            this.setState({ redirectTo: "/home" })
+            this.setState({ success: true })
         } catch (error) {
             console.error(error);
-            alert("Erro ao efetuar login.");
+            alert("Erro ao criar usuário");
         }
     }
 
     render() {
-        if (this.state.redirectTo) {
-            return (
-                <Navigate to={this.state.redirectTo} replace={true} />
-            )
+        if (this.state.success) {
+          return (
+            <>
+                <div>Usuário criado com sucesso. <a href='/'>Ir para a tela de login</a></div>
+            </>
+          )
         }
 
         return (
             <>
                 <AuthRedirector whenLogged redirectTo="/home" />
 
-                <Form onSubmit={this.sendLogin}>
-                    <Form.Group className="mb-3" controlId="password">
+                <Form onSubmit={this.createUser}>
+                    <Form.Group className="mb-3" controlId="name">
+                        <Form.Label>Nome</Form.Label>
+                        <Form.Control type="text"
+                                      placeholder="Nome"
+                                      value={this.state.name}
+                                      onChange={e => this.setState({ name: e.target.value })} />
+                    </Form.Group>
+
+                    <Form.Group className="mb-3" controlId="username">
                         <Form.Label>Usuário</Form.Label>
                         <Form.Control type="text"
                                       placeholder="Usuário"
@@ -60,10 +67,7 @@ class Login extends Component {
                                       value={this.state.password}
                                       onChange={e => this.setState({ password: e.target.value })} />
                     </Form.Group>
-                    
-                    <div style={{float: 'right'}}>Não possui cadastro? <a href='/register'>Registrar novo usuário</a></div>
-                    
-                    <Button variant="primary" type="submit">Entrar</Button>
+                    <Button variant="primary" type="submit">Criar usuário</Button>
                 </Form>
             </>
         )

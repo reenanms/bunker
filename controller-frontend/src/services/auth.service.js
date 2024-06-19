@@ -20,7 +20,7 @@ const service = {
     },
 
     async authenticateDevice(token, deviceId) {
-        return await restService.put(`/auth/${deviceId}`, null, token);
+        return await restService.post(`/auth/${deviceId}`, null, token);
     },
 
     setAuthData(data) {
