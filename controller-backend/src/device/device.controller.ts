@@ -14,6 +14,7 @@ import { DeleteDeviceUseCase } from "common-core/device/useCase/DeleteDevice.use
 import { GetAllDevicesUseCase } from "common-core/device/useCase/GetAllDevices.usecase";
 import { GetDeviceUseCase } from "common-core/device/useCase/GetDevice.usecase";
 import { UpdateDeviceUseCase } from "common-core/device/useCase/UpdateDevice.usecase";
+import { GetDeviceDataUseCase } from "common-core/deviceData/useCase/GetDeviceData.usecase"
 import { Device } from "common-core/device/entity/Device";
 import { AuthGuard } from "../auth.guard";
 
@@ -31,7 +32,7 @@ export class DeviceController {
   @Post("/")
   async createDevice(@Body() device: Device) {
     const userCase = resolver.resolve(CreateDeviceUseCase);
-    await userCase.run(device);
+    return await userCase.run(device);
   }
 
   @Delete("/:ID")
@@ -50,6 +51,12 @@ export class DeviceController {
   async updateDevice(@Param("ID") id: string, @Body() device: Device) {
     device.id = id;
     const userCase = resolver.resolve(UpdateDeviceUseCase);
-    await userCase.run(device);
+    return await userCase.run(device);
+  }
+
+  @Get("/:ID/data")
+  async getDeviceData(@Param("ID") id: string): Promise<any[]> {
+    const userCase = resolver.resolve(GetDeviceDataUseCase);
+    return await userCase.run(id);
   }
 }

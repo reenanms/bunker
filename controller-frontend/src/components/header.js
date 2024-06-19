@@ -44,34 +44,42 @@ class Header extends React.Component {
         window.location.reload();
     }
 
-    render() {
-        if (!this.state.user) {
-            return (
-                <></>
-            );
-        }
+    renderLoggedInfos() {
+      if (!this.state.user) {
+          return (
+              <></>
+          );
+      }
 
+      return (
+        <>
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              {this.props.children}
+            </Nav>
+
+            <Navbar.Text>
+              Logado como: 
+            </Navbar.Text>
+            <NavDropdown title={this.state.user.name} id="basic-nav-dropdown">
+              <NavDropdown.Item href="#" onClick={_ => this.logout()}>Sair</NavDropdown.Item>
+            </NavDropdown>
+            
+          </Navbar.Collapse>
+        </>
+      )
+    }
+
+    render() {
         return (
             <>
                 <Navbar expand="lg" className="bg-body-tertiary">
                   <Container>
                     <Navbar.Brand href={this.props.href}>{this.props.title}</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    <Navbar.Collapse id="basic-navbar-nav">
-                      <Nav className="me-auto">
-                        {this.props.children}
-                      </Nav>
-
-                      <Navbar.Text>
-                        Logado como: 
-                      </Navbar.Text>
-                      <NavDropdown title={this.state.user.name} id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#" onClick={_ => this.logout()}>Sair</NavDropdown.Item>
-                      </NavDropdown>
-                    </Navbar.Collapse>
+                    
+                    {this.renderLoggedInfos()}
                   </Container>
-
-                  
                 </Navbar>
             </>
         )

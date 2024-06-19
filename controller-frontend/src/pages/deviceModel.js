@@ -10,7 +10,6 @@ import DeviceModelList from '../components/deviceModelList'
 
 
 class DeviceModel extends React.Component {
-
     constructor(props) {
         super(props);
         this.state = {
@@ -94,7 +93,7 @@ class DeviceModel extends React.Component {
 
                 <h2>Modelos de dispositivo</h2>
 
-                <DeviceModelList
+                <DeviceModelList key={"df"}
                     devices={this.state.devices}
                     deviceModels={this.state.deviceModels}
                     schemas={this.state.schemas}/>

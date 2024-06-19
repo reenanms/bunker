@@ -17,18 +17,21 @@ model User {
   username  String  @id
   password  String
   name      String
+  
   groups    Group[]
+  devices   DeviceModel[]
 }
 
 model Group {
-  id                Int               @id @default(autoincrement())
+  id                String            @id @default(uuid())
   name              String
+  
   users             User[]
   routesPermissions RoutePermission[]
 }
 
 model RoutePermission {
-  gruopId    Int
+  gruopId    String
   route      String
   permission String
   gruop      Group @relation(fields: [gruopId], references: [id])
@@ -39,17 +42,22 @@ model RoutePermission {
 
 //devices
 model Device {
-  id             String       @id
+  id             String       @id @default(uuid())
+  name           String
   deviceModelId  String
   deviceModel    DeviceModel  @relation(fields: [deviceModelId], references: [id])
 }
 
 model DeviceModel {
-  id            String    @id
+  id            String    @id @default(uuid())
+  name          String
   description   String
+  username      String
   dataTypeName  String
 
+  user          User      @relation(fields: [username], references: [username])
   dataType      DataType  @relation(fields: [dataTypeName], references: [name])
+
   devices       Device[]
 }
 

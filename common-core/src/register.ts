@@ -32,6 +32,8 @@ import { GetAllUsersUseCase } from './user/useCase/GetAllUsers.usecase';
 import { GetAllSchemasUseCase } from './schema/useCase/GetAllSchemas.usecase';
 import { GetAllDeviceModelsUseCase } from './deviceModel/useCase/GetAllDeviceModels.usecase';
 import { GetAllDevicesUseCase } from './device/useCase/GetAllDevices.usecase';
+import { GetDeviceDataUseCase } from './deviceData/useCase/GetDeviceData.usecase';
+import { GetDeviceModelsByNameAndUsernameUseCase } from './deviceModel/useCase/GetDeviceModelsByNameAndUsername.usecase';
 
 
 export async function init() {
@@ -41,19 +43,19 @@ export async function init() {
 
 
   //auth
-  container.register(GenerateDeviceTokenUseCase, { useFactory: () => new GenerateDeviceTokenUseCase(container.resolve(UserRepository))});
-  container.register(GenerateUserTokenUseCase, { useFactory: () => new GenerateUserTokenUseCase(container.resolve(UserRepository))});
-  container.register(RefreshUserTokenUseCase, { useFactory: () => new RefreshUserTokenUseCase()});
-  container.register(GetUserTokenPayloadUseCase, { useFactory: () => new GetUserTokenPayloadUseCase()});
+  container.register(GenerateDeviceTokenUseCase, { useFactory: () => new GenerateDeviceTokenUseCase(container.resolve(UserRepository)) });
+  container.register(GenerateUserTokenUseCase, { useFactory: () => new GenerateUserTokenUseCase(container.resolve(UserRepository)) });
+  container.register(RefreshUserTokenUseCase, { useFactory: () => new RefreshUserTokenUseCase() });
+  container.register(GetUserTokenPayloadUseCase, { useFactory: () => new GetUserTokenPayloadUseCase() });
 
 
   //device
   container.register(DeviceRepository, { useFactory: () => new DeviceRepository(container.resolve(PrismaSQL)) });
-  container.register(CreateDeviceUseCase, { useFactory: () => new CreateDeviceUseCase(container.resolve(DeviceRepository))});
-  container.register(DeleteDeviceUseCase, { useFactory: () => new DeleteDeviceUseCase(container.resolve(DeviceRepository))});
-  container.register(GetDeviceUseCase, { useFactory: () => new GetDeviceUseCase(container.resolve(DeviceRepository))});
-  container.register(GetAllDevicesUseCase, { useFactory: () => new GetAllDevicesUseCase(container.resolve(DeviceRepository))});
-  container.register(UpdateDeviceUseCase, { useFactory: () => new UpdateDeviceUseCase(container.resolve(DeviceRepository))});
+  container.register(CreateDeviceUseCase, { useFactory: () => new CreateDeviceUseCase(container.resolve(DeviceRepository)) });
+  container.register(DeleteDeviceUseCase, { useFactory: () => new DeleteDeviceUseCase(container.resolve(DeviceRepository)) });
+  container.register(GetDeviceUseCase, { useFactory: () => new GetDeviceUseCase(container.resolve(DeviceRepository)) });
+  container.register(GetAllDevicesUseCase, { useFactory: () => new GetAllDevicesUseCase(container.resolve(DeviceRepository)) });
+  container.register(UpdateDeviceUseCase, { useFactory: () => new UpdateDeviceUseCase(container.resolve(DeviceRepository)) });
 
 
   //deviceData
@@ -62,32 +64,34 @@ export async function init() {
                                                               container.resolve(DeviceRepository),
                                                               container.resolve(DeviceModelRepository),
                                                               container.resolve(DeviceDataRepository),
-                                                              container.resolve(SchemaRepository))});
+                                                              container.resolve(SchemaRepository)) });
+  container.register(GetDeviceDataUseCase, { useFactory: () => new GetDeviceDataUseCase(container.resolve(DeviceDataRepository)) });
 
 
   //deviceModel
   container.register(DeviceModelRepository, { useFactory: () => new DeviceModelRepository(container.resolve(PrismaSQL)) });
-  container.register(CreateDeviceModelUseCase, { useFactory: () => new CreateDeviceModelUseCase(container.resolve(DeviceModelRepository))});
-  container.register(DeleteDeviceModelUseCase, { useFactory: () => new DeleteDeviceModelUseCase(container.resolve(DeviceModelRepository))});
-  container.register(GetAllDeviceModelsUseCase, { useFactory: () => new GetAllDeviceModelsUseCase(container.resolve(DeviceModelRepository))});
-  container.register(GetDeviceModelUseCase, { useFactory: () => new GetDeviceModelUseCase(container.resolve(DeviceModelRepository))});
-  container.register(UpdateDeviceModelUseCase, { useFactory: () => new UpdateDeviceModelUseCase(container.resolve(DeviceModelRepository))});
+  container.register(CreateDeviceModelUseCase, { useFactory: () => new CreateDeviceModelUseCase(container.resolve(DeviceModelRepository)) });
+  container.register(DeleteDeviceModelUseCase, { useFactory: () => new DeleteDeviceModelUseCase(container.resolve(DeviceModelRepository)) });
+  container.register(GetAllDeviceModelsUseCase, { useFactory: () => new GetAllDeviceModelsUseCase(container.resolve(DeviceModelRepository)) });
+  container.register(GetDeviceModelUseCase, { useFactory: () => new GetDeviceModelUseCase(container.resolve(DeviceModelRepository)) });
+  container.register(GetDeviceModelsByNameAndUsernameUseCase, { useFactory: () => new GetDeviceModelsByNameAndUsernameUseCase(container.resolve(DeviceModelRepository)) });
+  container.register(UpdateDeviceModelUseCase, { useFactory: () => new UpdateDeviceModelUseCase(container.resolve(DeviceModelRepository)) });
 
 
   //schema
   container.register(SchemaRepository, { useFactory: () => new SchemaRepository(container.resolve(PrismaSQL)) });
-  container.register(CreateSchemaUseCase, { useFactory: () => new CreateSchemaUseCase(container.resolve(SchemaRepository))});
-  container.register(DeleteSchemaUseCase, { useFactory: () => new DeleteSchemaUseCase(container.resolve(SchemaRepository))});
-  container.register(GetAllSchemasUseCase, { useFactory: () => new GetAllSchemasUseCase(container.resolve(SchemaRepository))});
-  container.register(GetDataSchemaUseCase, { useFactory: () => new GetDataSchemaUseCase(container.resolve(SchemaRepository))});
-  container.register(GetSchemaUseCase, { useFactory: () => new GetSchemaUseCase(container.resolve(SchemaRepository))});
-  container.register(UpdateDataSchemaUseCase, { useFactory: () => new UpdateDataSchemaUseCase(container.resolve(SchemaRepository))});
-  container.register(UpdateSchemaUseCase, { useFactory: () => new UpdateSchemaUseCase(container.resolve(SchemaRepository))});
+  container.register(CreateSchemaUseCase, { useFactory: () => new CreateSchemaUseCase(container.resolve(SchemaRepository)) });
+  container.register(DeleteSchemaUseCase, { useFactory: () => new DeleteSchemaUseCase(container.resolve(SchemaRepository)) });
+  container.register(GetAllSchemasUseCase, { useFactory: () => new GetAllSchemasUseCase(container.resolve(SchemaRepository)) });
+  container.register(GetDataSchemaUseCase, { useFactory: () => new GetDataSchemaUseCase(container.resolve(SchemaRepository)) });
+  container.register(GetSchemaUseCase, { useFactory: () => new GetSchemaUseCase(container.resolve(SchemaRepository)) });
+  container.register(UpdateDataSchemaUseCase, { useFactory: () => new UpdateDataSchemaUseCase(container.resolve(SchemaRepository)) });
+  container.register(UpdateSchemaUseCase, { useFactory: () => new UpdateSchemaUseCase(container.resolve(SchemaRepository)) });
 
 
   //user
   container.register(UserRepository, { useFactory: () => new UserRepository(container.resolve(PrismaSQL)) });
-  container.register(CreateUserUseCase, { useFactory: () => new CreateUserUseCase(container.resolve(UserRepository))});
-  container.register(GetAllUsersUseCase, { useFactory: () => new GetAllUsersUseCase(container.resolve(UserRepository))});
-  container.register(GetUserUseCase, { useFactory: () => new GetUserUseCase(container.resolve(UserRepository))});
+  container.register(CreateUserUseCase, { useFactory: () => new CreateUserUseCase(container.resolve(UserRepository)) });
+  container.register(GetAllUsersUseCase, { useFactory: () => new GetAllUsersUseCase(container.resolve(UserRepository)) });
+  container.register(GetUserUseCase, { useFactory: () => new GetUserUseCase(container.resolve(UserRepository)) });
 }

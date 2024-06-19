@@ -3,9 +3,12 @@ import Accordion from 'react-bootstrap/Accordion';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import ListGroup from 'react-bootstrap/ListGroup';
 
 import authService from '../services/auth.service'
 import deviceService from '../services/device.service'
+
+import { uid } from 'uid';
 
 
 class DeviceList extends React.Component {
@@ -13,41 +16,76 @@ class DeviceList extends React.Component {
     super(props);
     
     this.state = {
-      devices: this.props.devices ?? []
+      devices: this.props.devices ?? [],
+      deviceTokens: []
     }
   }
 
-  renderItem(device, index) {
-    return (
-      <>
-        <Accordion.Item key={index} eventKey={`${index}`}>
-          <Accordion.Header>{device.id}</Accordion.Header>
-          <Accordion.Body>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-            eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad
-            minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-            pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
-            culpa qui officia deserunt mollit anim id est laborum.
-          </Accordion.Body>
-        </Accordion.Item>
-      </>
-    )
-  }
-
   addDevice = async _ => {
-    const newData = {
-      id: crypto.randomUUID(),
+    const dataToSend = {
+      name: uid(),
       deviceModelId: this.props.deviceModelId
     };
 
     const token = authService.getToken();
-    await deviceService.createDevice(token, ...Object.values(newData));
+    const newData = await deviceService.createDevice(token, ...Object.values(dataToSend));
 
     let devices = this.state.devices;
     devices.push(newData);
     this.setState({ devices });
+  }
+
+  generateToken = async deviceId => {
+    const token = authService.getToken();
+    const deviceToken = await authService.authenticateDevice(token, deviceId);
+    let deviceTokens = this.state.deviceTokens;
+    deviceTokens.push(deviceToken);
+    this.setState({ deviceTokens })
+  }
+
+  renderDeviceInfos(device, deviceTokens) {
+    return (
+      <>
+        <Row>
+          <Col>
+          Para enviar dados para seu device, você vai precisar gerar o token de acesso.
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <Button variant="primary"
+                      style={{float: 'right'}}
+                      onClick={async _ => this.generateToken(device.id)}>Gerar token</Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col>
+            <ListGroup as="ol" numbered>
+              {deviceTokens.map((token) =>
+                  <>
+                    <ListGroup.Item as="li" style={{ wordWrap: 'break-word' }}>{token.token}</ListGroup.Item>
+                  </>
+                )}
+            </ListGroup>
+          </Col>
+        </Row>
+      </>
+    );
+  }
+
+  renderItem(device, index) {
+    const deviceTokens = this.state.deviceTokens.filter(t=> t.deviceId === device.id);
+
+    return (
+      <>
+        <Accordion.Item key={`${index}`} eventKey={`${index}`}>
+          <Accordion.Header>{device.name}</Accordion.Header>
+          <Accordion.Body>
+            {this.renderDeviceInfos(device, deviceTokens)}
+          </Accordion.Body>
+        </Accordion.Item>
+      </>
+    )
   }
 
   render() {
@@ -64,7 +102,7 @@ class DeviceList extends React.Component {
           <Row>
             <Col>
               <Accordion flush>
-                {this.state.devices.map(this.renderItem)}
+                {this.state.devices.map((d,i) => this.renderItem(d,i))}
               </Accordion>
             </Col>
           </Row>

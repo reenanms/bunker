@@ -11,12 +11,12 @@ export abstract class GenericCRUDRepository<ModelEntity, ModelEntityKey>
   protected abstract getPrismaDelegate() : any;
 
   public async create(data: ModelEntity): Promise<ModelEntity> {
-    const key = this.getKey(data);
-    const foundItens = await this.getPrismaDelegate()
-                        .findMany({ where: key });
+    // const key = this.getKey(data);
+    // const foundItens = await this.getPrismaDelegate()
+    //                     .findMany({ where: key });
 
-    if (foundItens.length > 0)
-      throw new AlreadyRegisteredError();
+    // if (foundItens.length > 0)
+    //   throw new AlreadyRegisteredError();
 
     const resultData = await this.getPrismaDelegate().create({ data });
     return resultData;

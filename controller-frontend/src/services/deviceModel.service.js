@@ -7,17 +7,18 @@ const service = {
     async getDeviceModel(token, id) {
         return await restService.get(`/deviceModel/${id}`, token);
     },
-    async createDeviceModel(token, id, description, schemaName) {
+    async createDeviceModel(token, name, description, schemaName) {
         let data = {
-            id,
+            name,
             description,
             schemaName
         };
 
         return await restService.post('/deviceModel', data, token);
     },
-    async updateDeviceModel(token, id, description, schemaName) {
+    async updateDeviceModel(token, id, name, description, schemaName) {
         let data = {
+            name,
             description,
             schemaName
         };
