@@ -15,11 +15,11 @@ export class CreateSchemaUseCase {
 
     switch (schema.type) {
       case SchemaType.BASIC:
-          return await this.createSchemaTypeBasic(schema, modelSchemaResult);
+        return await this.createSchemaTypeBasic(schema, modelSchemaResult);
       case SchemaType.OBJECT:
-        return this.createSchemaTypeObject(schema, modelSchemaResult);
+        return await this.createSchemaTypeObject(schema, modelSchemaResult);
       case SchemaType.ARRAY:
-        return this.createSchemaTypeArray(schema, modelSchemaResult);
+        return await this.createSchemaTypeArray(schema, modelSchemaResult);
     }
   }
 

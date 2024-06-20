@@ -34,6 +34,7 @@ import { GetAllDeviceModelsUseCase } from './deviceModel/useCase/GetAllDeviceMod
 import { GetAllDevicesUseCase } from './device/useCase/GetAllDevices.usecase';
 import { GetDeviceDataUseCase } from './deviceData/useCase/GetDeviceData.usecase';
 import { GetDeviceModelsByNameAndUsernameUseCase } from './deviceModel/useCase/GetDeviceModelsByNameAndUsername.usecase';
+import { GetDataSchemaFieldsUseCase } from './schema/useCase/GetDataSchemaFields.usecase';
 
 
 export async function init() {
@@ -84,6 +85,7 @@ export async function init() {
   container.register(DeleteSchemaUseCase, { useFactory: () => new DeleteSchemaUseCase(container.resolve(SchemaRepository)) });
   container.register(GetAllSchemasUseCase, { useFactory: () => new GetAllSchemasUseCase(container.resolve(SchemaRepository)) });
   container.register(GetDataSchemaUseCase, { useFactory: () => new GetDataSchemaUseCase(container.resolve(SchemaRepository)) });
+  container.register(GetDataSchemaFieldsUseCase, { useFactory: () => new GetDataSchemaFieldsUseCase(container.resolve(SchemaRepository)) });
   container.register(GetSchemaUseCase, { useFactory: () => new GetSchemaUseCase(container.resolve(SchemaRepository)) });
   container.register(UpdateDataSchemaUseCase, { useFactory: () => new UpdateDataSchemaUseCase(container.resolve(SchemaRepository)) });
   container.register(UpdateSchemaUseCase, { useFactory: () => new UpdateSchemaUseCase(container.resolve(SchemaRepository)) });

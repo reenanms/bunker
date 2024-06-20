@@ -28,7 +28,7 @@ class Header extends React.Component {
             if (!user)
                 return;
                 
-            this.setState({ user } );
+            this.setState({ user });
         }
         catch (e) {
             console.error(e)
@@ -44,7 +44,7 @@ class Header extends React.Component {
         window.location.reload();
     }
 
-    renderLoggedInfos() {
+    renderLoggedInfos(user) {
       if (!this.state.user) {
           return (
               <></>
@@ -53,7 +53,6 @@ class Header extends React.Component {
 
       return (
         <>
-          <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
               {this.props.children}
             </Nav>
@@ -64,8 +63,6 @@ class Header extends React.Component {
             <NavDropdown title={this.state.user.name} id="basic-nav-dropdown">
               <NavDropdown.Item href="#" onClick={_ => this.logout()}>Sair</NavDropdown.Item>
             </NavDropdown>
-            
-          </Navbar.Collapse>
         </>
       )
     }
@@ -77,8 +74,9 @@ class Header extends React.Component {
                   <Container>
                     <Navbar.Brand href={this.props.href}>{this.props.title}</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                    
-                    {this.renderLoggedInfos()}
+                    <Navbar.Collapse id="basic-navbar-nav">
+                      {this.renderLoggedInfos(this.state.user)}
+                    </Navbar.Collapse>
                   </Container>
                 </Navbar>
             </>
