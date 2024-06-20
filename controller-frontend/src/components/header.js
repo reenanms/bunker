@@ -21,9 +21,6 @@ class Header extends React.Component {
     async loadUserInfos() {
         try {
             const token = await authService.getToken();
-            if (!token)
-                return;
-
             const user = await userService.getUser(token);
             if (!user)
                 return;

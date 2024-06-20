@@ -269,6 +269,7 @@ services:
       context: ./controller-frontend
       args:
         REACT_APP_BACKEND_URL: http://${EXTERNAL_IP}:3010
+        REACT_APP_DASHBOARD_URL: http://${EXTERNAL_IP}:8081
     depends_on:
       controller-backend:
         condition: service_started

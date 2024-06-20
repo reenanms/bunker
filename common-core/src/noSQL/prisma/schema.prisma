@@ -16,3 +16,9 @@ model DeviceData {
   deviceId    String
   data        String
 }
+
+model DashboardConfig {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  username    String @unique
+  config      String
+}
