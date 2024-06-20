@@ -13,7 +13,9 @@ import { CreateSchemaUseCase } from "common-core/schema/useCase/CreateSchema.use
 import { DeleteSchemaUseCase } from "common-core/schema/useCase/DeleteSchema.usecase";
 import { GetAllSchemasUseCase } from "common-core/schema/useCase/GetAllSchemas.usecase";
 import { GetSchemaUseCase } from "common-core/schema/useCase/GetSchema.usecase";
+import { GetDataSchemaFieldsUseCase } from "common-core/schema/useCase/GetDataSchemaFields.usecase"
 import { UpdateSchemaUseCase } from "common-core/schema/useCase/UpdateSchema.usecase";
+import { DataSchemaField } from "common-core/schema/entity/DataSchemaField";
 import { Schema } from "common-core/schema/entity/Schema";
 import { AuthGuard } from "../auth.guard";
 
@@ -31,7 +33,7 @@ export class SchemaController {
   @Post("/")
   async createSchema(@Body() schema: Schema) {
     const userCase = resolver.resolve(CreateSchemaUseCase);
-    await userCase.run(schema);
+    return await userCase.run(schema);
   }
 
   @Delete("/:NAME")
@@ -46,10 +48,16 @@ export class SchemaController {
     return await userCase.run(name);
   }
 
+  @Get("/:NAME/fields")
+  async getSchemaFields(@Param("NAME") name: string): Promise<DataSchemaField[]> {
+    const userCase = resolver.resolve(GetDataSchemaFieldsUseCase);
+    return await userCase.run(name);
+  }
+
   @Put("/:NAME")
   async updateSchema(@Param("NAME") name: string, @Body() schema: Schema) {
     schema.name = name;
     const userCase = resolver.resolve(UpdateSchemaUseCase);
-    await userCase.run(schema);
+    return await userCase.run(schema);
   }
 }

@@ -7,6 +7,9 @@ const service = {
     async getSchema(token, name) {
         return await restService.get(`/schema/${name}`, token);
     },
+    async getSchemaFields(token, name) {
+        return await restService.get(`/schema/${name}/fields`, token);
+    },
     async createSchemaBasic(token, name, hasQuotes, regexValidator) {
         let data = {
             name,
