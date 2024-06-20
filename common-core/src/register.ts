@@ -39,6 +39,8 @@ import { DashboardConfigRepository } from './dashboard/repository/DashboardConfi
 import { CreateDashboardConfigUseCase } from './dashboard/useCase/CreateDashboardConfig.usecase';
 import { GetDashboardConfigUseCase } from './dashboard/useCase/GetDashboardConfig.usecase';
 import { UpdateDashboardConfigUseCase } from './dashboard/useCase/UpdateDashboardConfig.usecase';
+import { DeviceTokenRepository } from './deviceToken/repository/DeviceToken.repository';
+import { GetDeviceTokensUseCase } from './deviceToken/useCase/GetDeviceTokens.usecase';
 
 
 export async function init() {
@@ -55,7 +57,7 @@ export async function init() {
 
 
   //auth
-  container.register(GenerateDeviceTokenUseCase, { useFactory: () => new GenerateDeviceTokenUseCase(container.resolve(UserRepository)) });
+  container.register(GenerateDeviceTokenUseCase, { useFactory: () => new GenerateDeviceTokenUseCase(container.resolve(UserRepository), container.resolve(DeviceTokenRepository)) });
   container.register(GenerateUserTokenUseCase, { useFactory: () => new GenerateUserTokenUseCase(container.resolve(UserRepository)) });
   container.register(RefreshUserTokenUseCase, { useFactory: () => new RefreshUserTokenUseCase() });
   container.register(GetUserTokenPayloadUseCase, { useFactory: () => new GetUserTokenPayloadUseCase() });
@@ -88,6 +90,11 @@ export async function init() {
   container.register(GetDeviceModelUseCase, { useFactory: () => new GetDeviceModelUseCase(container.resolve(DeviceModelRepository)) });
   container.register(GetDeviceModelsByNameAndUsernameUseCase, { useFactory: () => new GetDeviceModelsByNameAndUsernameUseCase(container.resolve(DeviceModelRepository)) });
   container.register(UpdateDeviceModelUseCase, { useFactory: () => new UpdateDeviceModelUseCase(container.resolve(DeviceModelRepository)) });
+  
+
+  //deviceToken
+  container.register(DeviceTokenRepository, { useFactory: () => new DeviceTokenRepository(container.resolve(PrismaSQL)) });
+  container.register(GetDeviceTokensUseCase, { useFactory: () => new GetDeviceTokensUseCase(container.resolve(DeviceTokenRepository)) });
 
 
   //schema

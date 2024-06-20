@@ -46,6 +46,17 @@ model Device {
   name           String
   deviceModelId  String
   deviceModel    DeviceModel  @relation(fields: [deviceModelId], references: [id])
+
+  tokens         DeviceToken[]
+}
+
+model DeviceToken {
+  id        String      @id @default(uuid())
+  token     String
+  datetime  DateTime    @default(now())
+  isValid   Boolean     @default(true)
+  deviceId  String
+  device    Device      @relation(fields: [deviceId], references: [id])
 }
 
 model DeviceModel {
