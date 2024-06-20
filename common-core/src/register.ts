@@ -35,12 +35,23 @@ import { GetAllDevicesUseCase } from './device/useCase/GetAllDevices.usecase';
 import { GetDeviceDataUseCase } from './deviceData/useCase/GetDeviceData.usecase';
 import { GetDeviceModelsByNameAndUsernameUseCase } from './deviceModel/useCase/GetDeviceModelsByNameAndUsername.usecase';
 import { GetDataSchemaFieldsUseCase } from './schema/useCase/GetDataSchemaFields.usecase';
+import { DashboardConfigRepository } from './dashboard/repository/DashboardConfig.repository';
+import { CreateDashboardConfigUseCase } from './dashboard/useCase/CreateDashboardConfig.usecase';
+import { GetDashboardConfigUseCase } from './dashboard/useCase/GetDashboardConfig.usecase';
+import { UpdateDashboardConfigUseCase } from './dashboard/useCase/UpdateDashboardConfig.usecase';
 
 
 export async function init() {
   //sql + nosql
   container.register(PrismaSQL, { useValue: new PrismaSQL() });
   container.register(PrismaNoSQL, { useValue: new PrismaNoSQL() });
+
+
+  //dashboard
+  container.register(DashboardConfigRepository, { useFactory: () => new DashboardConfigRepository(container.resolve(PrismaNoSQL)) });
+  container.register(CreateDashboardConfigUseCase, { useFactory: () => new CreateDashboardConfigUseCase(container.resolve(DashboardConfigRepository)) });
+  container.register(GetDashboardConfigUseCase, { useFactory: () => new GetDashboardConfigUseCase(container.resolve(DashboardConfigRepository)) });
+  container.register(UpdateDashboardConfigUseCase, { useFactory: () => new UpdateDashboardConfigUseCase(container.resolve(DashboardConfigRepository)) });
 
 
   //auth

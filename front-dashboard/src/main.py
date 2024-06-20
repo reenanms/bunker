@@ -3,6 +3,7 @@ import streamlit
 import json
 import definitionLoader
 import dashboardLoader
+import database
 
 def loadPageConfigs():
     streamlit.set_page_config(
@@ -11,10 +12,21 @@ def loadPageConfigs():
 
 #@streamlit.cache_data
 def loadDashboardJson(username):
-    f = open ('data.json', "r");
-    data = json.loads(f.read());
-    f.close();
-    return data;
+    # f = open ('data.json', "r");
+    # data = json.loads(f.read());
+    # f.close();
+    # return data;
+
+    if (username is None):
+        return None;
+
+    queryResult = database.readCollectionData("DashboardConfig", {"username": { "$eq": username} });
+    for item in queryResult:
+        config = item["config"];
+        data = json.loads(config);
+        return data;
+        
+    return None;
 
 def getCurrentUsername():
     return streamlit.query_params["username"] if "username" in streamlit.query_params else None;
@@ -27,9 +39,12 @@ def main():
     print("username:", username);
     
     definitionFile=loadDashboardJson(username);
+    if (definitionFile is None):
+        return
+
     dashboardDefinition=definitionLoader.load(definitionFile);
     dashboardLoader.load(dashboardDefinition);
 
 
-# to open: http://localhost:8501/?username=username&embed=true
+# to open: http://localhost:8501/?username=admin&embed=true
 main();

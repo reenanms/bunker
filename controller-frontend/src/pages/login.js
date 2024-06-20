@@ -26,7 +26,8 @@ class Login extends Component {
             const token = authService.getToken();
             await userService.getUser(token);
 
-            this.setState({ redirectTo: "/home" })
+            this.setState({ redirectTo: "/home" });
+            window.location.reload();
         } catch (error) {
             console.error(error);
             alert("Erro ao efetuar login.");
