@@ -15,6 +15,7 @@ import { GetAllDevicesUseCase } from "common-core/device/useCase/GetAllDevices.u
 import { GetDeviceUseCase } from "common-core/device/useCase/GetDevice.usecase";
 import { UpdateDeviceUseCase } from "common-core/device/useCase/UpdateDevice.usecase";
 import { GetDeviceDataUseCase } from "common-core/deviceData/useCase/GetDeviceData.usecase"
+import { GetDeviceTokensUseCase } from "common-core/deviceToken/useCase/GetDeviceTokens.usecase"
 import { Device } from "common-core/device/entity/Device";
 import { AuthGuard } from "../auth.guard";
 
@@ -57,6 +58,12 @@ export class DeviceController {
   @Get("/:ID/data")
   async getDeviceData(@Param("ID") id: string): Promise<any[]> {
     const userCase = resolver.resolve(GetDeviceDataUseCase);
+    return await userCase.run(id);
+  }
+
+  @Get("/:ID/token")
+  async getDeviceTokens(@Param("ID") id: string): Promise<string[]> {
+    const userCase = resolver.resolve(GetDeviceTokensUseCase);
     return await userCase.run(id);
   }
 }
