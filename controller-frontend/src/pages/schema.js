@@ -1,5 +1,6 @@
 import React from 'react';
 import AuthRedirector from '../components/authRedirector'
+import SchemaModelList from '../components/schemaModelList';
 
 import authService from '../services/auth.service'
 import schemaService from '../services/schema.service'
@@ -11,24 +12,33 @@ class Schema extends React.Component {
         this.state = {
             schemas: [],
             schemasLoaded: false,
+            schemasAll: [],
+            newData: false
         }
     }
 
     async loadSchemas(token) {
         try {
-            const schemas = await schemaService.getAllSchemas(token);
+            const schemas = [];
+            const schemasAll = await schemaService.getAllSchemas(token);
+
+            schemasAll.forEach(async s => {
+                let schemaField = await schemaService.getSchema(token, s.name);
+                if (s.type === 'OBJECT')
+                    schemas.push(schemaField);
+            });
             this.setState({ schemas });
+            this.setState({ schemasAll });
         }
         catch (e) {
-            console.error(e)
+            console.error(e);
         }
-        
+
         this.setState({ schemasLoaded: true });
     }
 
     async componentDidMount() {
         const token = await authService.getToken();
-
         await this.loadSchemas(token);
     }
 
@@ -49,7 +59,9 @@ class Schema extends React.Component {
 
                 <h2>Esquemas de dados</h2>
 
-                {this.state.schemas.map((schema, index) => <div>{schema.name}</div>)}
+                <SchemaModelList
+                    schemas={this.state.schemasAll}
+                    schemaModels={this.state.schemas} />
             </>
         )
     }

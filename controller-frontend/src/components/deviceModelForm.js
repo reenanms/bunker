@@ -82,8 +82,8 @@ class DeviceModelForm extends React.Component {
         <>
           <Button variant="danger"    style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.excluirClick}>Excluir</Button>
           <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.editClick}>Editar</Button>
-          <Button variant="primary"   style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.saveClick}>Savar</Button>
-          <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.cancelClick}  >Cancelar</Button>
+          <Button variant="primary"   style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.saveClick}>Salvar</Button>
+          <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.cancelClick}>Cancelar</Button>
         </>
       );
     }

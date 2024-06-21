@@ -63,12 +63,12 @@ class DeviceModelList extends React.Component {
         );
     }
 
-    renderDeviceModelAccordion(deviceModel,index,onChange,onCancel,onDelete) {
+    renderDeviceModelAccordion(deviceModel, index, onChange, onCancel, onDelete) {
         return (
             <>
                 <Accordion.Item key={`${index}`} eventKey={`${index}`}>
                     <Accordion.Header>
-                        {index===-1 ? "<Adicionando novo>" : `${deviceModel.name}: ${deviceModel.description}`}
+                        {index === -1 ? "<Adicionando novo>" : `${deviceModel.name}: ${deviceModel.description}`}
                     </Accordion.Header>
                     <Accordion.Body>
                         <Row>
@@ -78,7 +78,7 @@ class DeviceModelList extends React.Component {
                                     onChange={onChange}
                                     onCancel={onCancel}
                                     onDelete={onDelete}
-                                    newData={index===-1}
+                                    newData={index === -1}
                                     schemas={this.state.schemas} />
                             </Col>
                         </Row>
@@ -107,10 +107,10 @@ class DeviceModelList extends React.Component {
         return (
             <>
                 {this.renderDeviceModelAccordion(newDeviceModel,
-                                                 -1,
-                                                 e => this.newDeviceModelChanged(e.target.value),
-                                                 () => this.setState({ newData: false }),
-                                                 () => {})}
+                    -1,
+                    e => this.newDeviceModelChanged(e.target.value),
+                    () => this.setState({ newData: false }),
+                    () => { })}
             </>
         );
     }
@@ -121,20 +121,20 @@ class DeviceModelList extends React.Component {
                 <Row>
                     <Col>
                         <Button variant="primary"
-                                style={{float: 'right'}}
-                                disabled={this.props.disabled}
-                                onClick={this.addDeviceModel}>Adicionar modelo de dispositivo</Button>
+                            style={{ float: 'right' }}
+                            disabled={this.props.disabled}
+                            onClick={this.addDeviceModel}>Adicionar modelo de dispositivo</Button>
                     </Col>
                 </Row>
                 <Row>
                     <Col>
                         <Accordion alwaysOpen defaultActiveKey={['-1']}>
-                            {this.state.deviceModels.map((deviceModel,index) =>
-                                        this.renderDeviceModelAccordion(deviceModel,
-                                                                        index,
-                                                                        e => this.deviceModelChanged(e.target.value, index),
-                                                                        () => {},
-                                                                        e => this.deviceModelDeleted(index)))}
+                            {this.state.deviceModels.map((deviceModel, index) =>
+                                this.renderDeviceModelAccordion(deviceModel,
+                                    index,
+                                    e => this.deviceModelChanged(e.target.value, index),
+                                    () => { },
+                                    e => this.deviceModelDeleted(index)))}
                             {this.renderNewDeviceModelAccordion()}
                         </Accordion>
                     </Col>
