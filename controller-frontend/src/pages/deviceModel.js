@@ -93,7 +93,7 @@ class DeviceModel extends React.Component {
 
                 <h2>Modelos de dispositivo</h2>
 
-                <DeviceModelList key={"df"}
+                <DeviceModelList
                     devices={this.state.devices}
                     deviceModels={this.state.deviceModels}
                     schemas={this.state.schemas}/>
