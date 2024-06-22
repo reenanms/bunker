@@ -4,7 +4,7 @@ import { DeviceData, PrismaClient as PrismaNoSQL } from "../../noSQL/prisma/clie
 export class DeviceDataRepository {
   constructor(readonly prisma: PrismaNoSQL) { }
 
-  public async create(deviceId: string, data: string) {
+  public async create(deviceId: string, data: any) {
     const deviceData = await this.prisma.deviceData.create({
       data: {
         deviceId,

@@ -98,10 +98,10 @@ class DeviceModelForm extends React.Component {
               <Form.Control name="name" placeholder="Nome"
                             value={this.state.name} onChange={e => this.setState({ name: e.target.value })}
                             disabled={this.state.mode === Mode.View}/>
-              <Form.Select name="schemaName" placeholder="Tipo de dado"
+              <Form.Select name="schemaName" placeholder="Modelo de dado"
                           value={this.state.schemaName} onChange={e => this.setState({ schemaName: e.target.value })}
                           disabled={this.state.mode === Mode.View}>
-                  <option>Seleciona o esquema de dados</option>
+                  <option>Selecione um item</option>
                   {this.props.schemas.map(schema =>
                       <option key={schema.name} value={schema.name}>{schema.name}</option>
                   )}

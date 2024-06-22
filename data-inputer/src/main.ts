@@ -16,7 +16,7 @@ import envs from "dotenv";
 
 function errorHandler(error: unknown) {
   if (error instanceof BaseError)
-      console.log((error as BaseError).message);
+    console.log((error as BaseError).message);
   else
     console.error(error);
 }
@@ -29,6 +29,8 @@ async function messageHandler(config: MessageReceiverConfig , message: string) {
     const createDeviceDataUseCase = resolver.resolve(CreateDeviceDataUseCase);
     const deviceData: DeviceData = JSON.parse(message);
     await createDeviceDataUseCase.run(deviceData);
+
+    console.log(`Success on topic ${config.topic}`, deviceData);
   } catch (error) {
     errorHandler(error);
   }

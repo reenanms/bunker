@@ -67,9 +67,23 @@ export class SchemaObjectValidator {
     this.validadeObjectProperties(dataTypeObjects, objectProperties, schema, obj)
   }
 
+  private getPropertyValue(objectProperties: Record<string, any>, propertyName: string) {
+    return objectProperties[propertyName];
+
+    //possible case insensitive solution:
+    
+    const key = (Object.keys(objectProperties) as Array<string>)
+                      .find(key => objectProperties[key].toUpperCase() === propertyName.toUpperCase());
+    
+    if (!key)
+      return null;
+
+    return objectProperties[key];
+  }
+
   private validadeObjectProperties(dataTypeObjects: DataSchemaTypeObject[], objectProperties: Record<string, any>, schema: DataSchema, obj: any) {
     for (const typeObject of dataTypeObjects) {
-      const property = objectProperties[typeObject.propertyName]
+      const property = this.getPropertyValue(objectProperties, typeObject.propertyName)
       if (property == null)
         throw new InvalidMatchSchemaError(schema.name, obj)
 

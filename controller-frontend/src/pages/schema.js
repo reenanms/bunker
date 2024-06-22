@@ -13,22 +13,27 @@ class Schema extends React.Component {
             schemas: [],
             schemasLoaded: false,
             schemasAll: [],
-            newData: false
         }
     }
 
     async loadSchemas(token) {
         try {
-            const schemas = [];
+            
             const schemasAll = await schemaService.getAllSchemas(token);
-
-            schemasAll.forEach(async s => {
+            
+            const schemas = []
+            for(const s of schemasAll){
+                if (s.type !== 'OBJECT')
+                    continue;
+                
                 let schemaField = await schemaService.getSchema(token, s.name);
-                if (s.type === 'OBJECT')
-                    schemas.push(schemaField);
+                schemas.push(schemaField);
+            }
+
+            this.setState({
+                schemasAll,
+                schemas
             });
-            this.setState({ schemas });
-            this.setState({ schemasAll });
         }
         catch (e) {
             console.error(e);
@@ -57,7 +62,7 @@ class Schema extends React.Component {
             <>
                 <AuthRedirector redirectTo="/" />
 
-                <h2>Esquemas de dados</h2>
+                <h2>Modelos de dados</h2>
 
                 <SchemaModelList
                     schemas={this.state.schemasAll}

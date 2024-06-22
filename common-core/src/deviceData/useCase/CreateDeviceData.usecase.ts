@@ -32,7 +32,7 @@ export class CreateDeviceDataUseCase {
 
     const prismaDeviceData = await this.deviceDataRepository.create(
       deviceId,
-      String(deviceData.data)
+      deviceData.data
     );
 
     return prismaDeviceData.id;

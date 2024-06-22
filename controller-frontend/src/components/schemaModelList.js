@@ -17,8 +17,6 @@ class SchemaModelList extends React.Component {
         }
     }
 
-    async componentDidMount() { }
-
     addSchemaModel = _ => {
         this.setState({ newData: true });
     }
@@ -27,7 +25,7 @@ class SchemaModelList extends React.Component {
         let allSchemaModels = this.state.schemaModels;
         allSchemaModels.push(newSchemaModel);
         this.setState({
-            schemaModel: allSchemaModels,
+            schemaModels: allSchemaModels,
             newData: false
         });
     }
@@ -35,13 +33,13 @@ class SchemaModelList extends React.Component {
     schemaModelChanged(newSchemaModel, index) {
         let allSchemaModels = this.state.schemaModels;
         allSchemaModels[index] = newSchemaModel;
-        this.setState({ schemaModel: allSchemaModels });
+        this.setState({ schemaModels: allSchemaModels });
     }
 
     schemaModelDeleted(index) {
         let allSchemaModels = this.state.schemaModels;
         allSchemaModels.splice(index, 1);
-        this.setState({ schemaModel: allSchemaModels });
+        this.setState({ schemaModels: allSchemaModels });
     }
 
     renderNewSchemaModelAccordion() {
@@ -99,7 +97,7 @@ class SchemaModelList extends React.Component {
                         <Button variant="primary"
                             style={{ float: 'right' }}
                             disabled={this.props.disabled}
-                            onClick={this.addSchemaModel}>Adicionar schema</Button>
+                            onClick={this.addSchemaModel}>Adicionar modelo de dado</Button>
                     </Col>
                 </Row>
                 <Row>
@@ -110,7 +108,8 @@ class SchemaModelList extends React.Component {
                                     index,
                                     e => this.schemaModelChanged(e.target.value),
                                     () => { },
-                                    e => this.schemaModelDeleted(index)))}
+                                    _ => this.schemaModelDeleted(index)))}
+                            
                             {this.renderNewSchemaModelAccordion()}
                         </Accordion>
                     </Col>

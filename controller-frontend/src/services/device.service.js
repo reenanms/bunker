@@ -10,7 +10,7 @@ const service = {
     async getDeviceData(token, id) {
         return await restService.get(`/device/${id}/data`, token);
     },
-    async getDeviceToken(token, id) {
+    async getDeviceTokens(token, id) {
         return await restService.get(`/device/${id}/token`, token);
     },
     async createDevice(token, name, deviceModelId) {
