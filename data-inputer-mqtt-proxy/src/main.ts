@@ -120,15 +120,24 @@ async function main() {
 
     const topicDeviceData = process.env.MQTT_TOPIC_DEVICE_DATA!;
     mqttClient.subscribeTopic(topicDeviceData, (message) => {
-      const splittedMessage = message.split(":");
-      if (splittedMessage.length != 2)
-        return;
+      try
+      {
+        console.log("received message", message);
 
-      const deviceId = splittedMessage[0];
-      const data = splittedMessage[1].trimStart();
-      const dataToSend = { deviceId, data };
+        const indexMessageSplitter = message.indexOf(":");
+        if (indexMessageSplitter == -1)
+          return;
 
-      sendMessagerData(dataToSend);
+        const deviceId = message.substring(0, indexMessageSplitter);
+        const dataString = message.substring(indexMessageSplitter+1);
+        const data = JSON.parse(dataString)
+        const dataToSend = { deviceId, data };
+
+        sendMessagerData(dataToSend);
+      }
+      catch(e) {
+        console.error(e);
+      }
     });
 
     await endless();

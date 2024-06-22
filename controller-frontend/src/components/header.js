@@ -69,7 +69,7 @@ class Header extends React.Component {
             <>
                 <Navbar expand="lg" className="bg-body-tertiary">
                   <Container>
-                    <Navbar.Brand href={this.props.href}>{this.props.title}</Navbar.Brand>
+                    <Navbar.Brand style={{ fontSize: 25, fontWeight: "bold" }} href={this.props.href}>{this.props.title}</Navbar.Brand>
                     <Navbar.Toggle aria-controls="basic-navbar-nav" />
                     <Navbar.Collapse id="basic-navbar-nav">
                       {this.renderLoggedInfos(this.state.user)}

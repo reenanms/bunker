@@ -1,6 +1,8 @@
 import React from 'react';
 import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
 import authService from '../services/auth.service'
 import schemaService from '../services/schema.service'
@@ -95,43 +97,58 @@ class SchemaModelForm extends React.Component {
         return (
             <>
                 <Form>
+                    
+                    <Form.Label>Nome</Form.Label>
                     <Form.Control
                         name="name" placeholder="Nome"
                         value={this.state.name} onChange={e => this.setState({ name: e.target.value })}
                         disabled={this.state.mode === Mode.View} />
-                    <label>Definições</label>
+                    
+                    <br />
+
+                    <Form.Label>Propriedades</Form.Label>
+                    <hr/>
+
                     {this.state.definitions.map((definition, index) => (
-                        <div key={index}>
-                            <Form.Control
-                                name="name"
-                                placeholder="Nome"
-                                value={definition.name}
-                                onChange={e => this.handleChange(index, 'name', e.target.value)}
-                                disabled={this.state.mode === Mode.View} />
-                            <Form.Select
-                                name="schema"
-                                placeholder="Tipo de dado"
-                                value={definition.schema}
-                                onChange={e => this.handleChange(index, 'schema', e.target.value)}
-                                disabled={this.state.mode === Mode.View}>
-                                <option>Seleciona o esquema de dados</option>
-                                {this.props.schemas.map(schema =>
-                                    <option key={schema.name} value={schema.name}>{schema.name}</option>
-                                )}
+                        <Row key={index} style={{ verticalAlign: 'bottom' }}>
+                            <Col>
+                                <Form.Label>Nome</Form.Label>
+                                <Form.Control
+                                    name="name"
+                                    placeholder="Nome"
+                                    value={definition.name}
+                                    onChange={e => this.handleChange(index, 'name', e.target.value)}
+                                    disabled={this.state.mode === Mode.View} />
+                            </Col>
+                            <Col>
+                                <Form.Label>Modelo de dado</Form.Label>
+                                <Form.Select
+                                    name="schema"
+                                    placeholder="Modelo de dado"
+                                    value={definition.schema}
+                                    onChange={e => this.handleChange(index, 'schema', e.target.value)}
+                                    disabled={this.state.mode === Mode.View}>
+                                    <option>Selecione um item</option>
+                                    {this.props.schemas.map(schema =>
+                                        <option key={schema.name} value={schema.name}>{schema.name}</option>
+                                    )}
                             </Form.Select>
-                            {this.state.mode !== 'View' && (
-                                <Button variant="danger" onClick={() => this.handleRemoveDefinition(index)}>
+                            </Col>
+                            <Col>
+                                <Button variant="danger"
+                                        onClick={() => this.handleRemoveDefinition(index)}
+                                        disabled={this.state.mode === Mode.View}>
                                     Remover
                                 </Button>
-                            )}
-                        </div>
+                            </Col>
+                        </Row>
                     ))}
 
-                    {this.state.mode !== 'View' && (
-                        <Button variant="primary" onClick={this.handleAddDefinition}>
-                            Adicionar Definição
-                        </Button>
-                    )}
+                    <Button variant="primary"
+                            onClick={this.handleAddDefinition}
+                            disabled={this.state.mode === Mode.View}>
+                        Adicionar propriedade
+                    </Button>
 
                 </Form>
             </>

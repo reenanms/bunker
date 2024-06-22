@@ -5,8 +5,8 @@ class DeviceModelForm extends React.Component {
     render() {
         return (
             <>
-              <Form.Select name="schemaName" placeholder="Tipo de dado" defaultValue={this.props.device.schemaName} disabled>
-                  <option>Seleciona o tipo de dado</option>
+              <Form.Select name="schemaName" placeholder="Modelo de dado" defaultValue={this.props.device.schemaName} disabled>
+                  <option>Selecione um item</option>
                   {this.props.schemas.map(schema =>
                       <option key={schema.name} value={schema.name}>{schema.name}</option>
                   )}

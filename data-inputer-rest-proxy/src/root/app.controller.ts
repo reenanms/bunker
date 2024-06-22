@@ -2,6 +2,7 @@ import { Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { AppService } from "./app.service";
 import getRawBody from "raw-body";
 import { AuthGuard } from "../auth.guard";
+import { json } from "stream/consumers";
 
 @Controller()
 export class AppController {
@@ -13,7 +14,7 @@ export class AppController {
     const raw = await getRawBody(request);
 
     const deviceId = request.auth.deviceId;
-    const data = raw.toString();
+    const data = JSON.parse(raw.toString());
 
     const dataToSend = {
       deviceId,

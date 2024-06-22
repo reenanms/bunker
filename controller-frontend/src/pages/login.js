@@ -45,6 +45,8 @@ class Login extends Component {
             <>
                 <AuthRedirector whenLogged redirectTo="/home" />
 
+                <h2>Login</h2>
+
                 <Form onSubmit={this.sendLogin}>
                     <Form.Group className="mb-3" controlId="password">
                         <Form.Label>Usuário</Form.Label>

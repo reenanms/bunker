@@ -30,7 +30,7 @@ class Login extends Component {
         }
     }
 
-    render() {
+    renderBody() {
         if (this.state.success) {
           return (
             <>
@@ -41,8 +41,6 @@ class Login extends Component {
 
         return (
             <>
-                <AuthRedirector whenLogged redirectTo="/home" />
-
                 <Form onSubmit={this.createUser}>
                     <Form.Group className="mb-3" controlId="name">
                         <Form.Label>Nome</Form.Label>
@@ -69,6 +67,18 @@ class Login extends Component {
                     </Form.Group>
                     <Button variant="primary" type="submit">Criar usuário</Button>
                 </Form>
+            </>
+        )
+    }
+
+    render() {
+        return (
+            <>
+                <AuthRedirector whenLogged redirectTo="/home" />
+
+                <h2>Registro de usuário</h2>
+
+                {this.renderBody()}
             </>
         )
     }
