@@ -43,7 +43,8 @@ services:
     #restart: no
     build: ./docker-files/kafka
     depends_on:
-      - broker-1
+      broker-1:
+        condition: service_started
     entrypoint: [ '/bin/sh', '-c' ]
     command: |
       "
