@@ -27,7 +27,7 @@ export class GetDataSchemaFieldsUseCase {
     
     const field: DataSchemaField = {
       path,
-      schemaPath, //: `${schemaPath}${schemaPath.length != 0 ? " > " : ""}${schemaName}`,
+      schemaPath,
       schemaName,
       hasQuotes: dataTypeBasic.basicType == BasicTypes.QUOTES
     };

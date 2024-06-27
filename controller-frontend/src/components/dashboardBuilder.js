@@ -106,6 +106,8 @@ class DashboardBuilder extends React.Component {
     }
 
     async loadDeviceModelsAndSchemasFields(token) {
+        const FIELD_PREFIX = "$.data";
+
         try {
             const deviceModels = await deviceModelService.getAllDeviceModels(token);
             const devices = await deviceService.getAllDevices(token);
@@ -115,7 +117,8 @@ class DashboardBuilder extends React.Component {
             
             let schemasFields = {};
             for (const schemaName of schemaNamesDistinct) {
-                const fields = await this.getSchemaFields(token, schemaName);
+                const schemaFields = await this.getSchemaFields(token, schemaName);
+                const fields = schemaFields.fields.map(e => `${FIELD_PREFIX}${e.path.substring(1)}`);
                 schemasFields[schemaName] = fields;
             }
 
@@ -178,7 +181,8 @@ class DashboardBuilder extends React.Component {
     renderCard(data, rowIndex, columnIndex) {
         return (
             <>
-                <Card style={{ width: '18rem' }}>
+                {/* <Card style={{ width: '18rem' }}> */}
+                <Card>
                   <Card.Body>
                     <CloseButton style={{ float: 'right' }} onClick={_ => this.removeData(rowIndex, columnIndex)} />
                     <Card.Title>Gráfico</Card.Title>
@@ -319,8 +323,6 @@ class DashboardBuilder extends React.Component {
         if (!this.isLoaded()) {
             return ( <></> );
         }
-
-        console.log("this.state...", this.state)
         
         return (
             <>

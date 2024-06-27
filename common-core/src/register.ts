@@ -10,7 +10,6 @@ import { DeviceRepository } from './device/repository/Device.repository';
 import { DeviceDataRepository } from './deviceData/repository/DeviceData.repository';
 import { CreateDeviceDataUseCase } from './deviceData/useCase/CreateDeviceData.usecase';
 import { GetDataSchemaUseCase } from './schema/useCase/GetDataSchema.usecase';
-import { UpdateDataSchemaUseCase } from './schema/useCase/UpdateDataSchema.usecase';
 import { PrismaClient as PrismaNoSQL } from "./noSQL/prisma/client";
 import { UserRepository } from './user/repository/User.repository';
 import { CreateUserUseCase } from './user/useCase/CreateUser.usecase';
@@ -105,7 +104,6 @@ export async function init() {
   container.register(GetDataSchemaUseCase, { useFactory: () => new GetDataSchemaUseCase(container.resolve(SchemaRepository)) });
   container.register(GetDataSchemaFieldsUseCase, { useFactory: () => new GetDataSchemaFieldsUseCase(container.resolve(SchemaRepository)) });
   container.register(GetSchemaUseCase, { useFactory: () => new GetSchemaUseCase(container.resolve(SchemaRepository)) });
-  container.register(UpdateDataSchemaUseCase, { useFactory: () => new UpdateDataSchemaUseCase(container.resolve(SchemaRepository)) });
   container.register(UpdateSchemaUseCase, { useFactory: () => new UpdateSchemaUseCase(container.resolve(SchemaRepository)) });
 
 
