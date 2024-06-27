@@ -33,9 +33,22 @@ export class UpdateSchemaUseCase {
 
   private async updateSchemaTypeObject(schema: Schema, modelSchemaResult: model.DataType): Promise<Schema> {
     const entitySchemaTypeObject = schema.definition as SchemaTypeObject[];
+
+    const modelCurrentSchemaTypeObject = await this.repository.getDataTypeObjects(modelSchemaResult.name);
     const modelSchemaTypeObject = await this.mapper.schemaTypeObjectEntityToModel(schema, entitySchemaTypeObject);
-    const modelSchemaTypeObjectResult = await this.repository.updateDataTypeObjects(modelSchemaTypeObject);
+    
+    const modelSchemaTypeObjectToDelete = modelCurrentSchemaTypeObject.filter(e => modelSchemaTypeObject.findIndex(o => o.propertyName == e.propertyName) == -1);
+    await this.repository.deleteDataTypeObject(modelSchemaTypeObjectToDelete);
+
+    const modelSchemaTypeObjectToUpdate = modelSchemaTypeObject.filter(e => modelCurrentSchemaTypeObject.findIndex(o => o.propertyName == e.propertyName) != -1);
+    const modelSchemaTypeObjectToUpdateResult = await this.repository.updateDataTypeObjects(modelSchemaTypeObjectToUpdate);
+
+    const modelSchemaTypeObjectToCreate = modelSchemaTypeObject.filter(e => modelCurrentSchemaTypeObject.findIndex(o => o.propertyName == e.propertyName) == -1);
+    const modelSchemaTypeObjectToCreateResult = await this.repository.createDataTypeObjects(modelSchemaTypeObjectToCreate);
+
+    const modelSchemaTypeObjectResult = [ ...modelSchemaTypeObjectToUpdateResult, ...modelSchemaTypeObjectToCreateResult ];
     const schemaResult = await this.mapper.schemaTypeObjectModelToEntity(modelSchemaResult, modelSchemaTypeObjectResult);
+
     return schemaResult;
   }
 

@@ -1,6 +1,5 @@
 import { Injectable } from "@nestjs/common";
 import { MessageSenderFactory } from "common-core/common/communication/sender/MessageSenderFactory";
-//import { AuthGuard } from "../auth.guard";
 
 export type DataToSend = {
   deviceId: string;

@@ -35,11 +35,10 @@ class ChartConfigForm extends React.Component {
     if (!schemaName)
       return [];
 
-    const schemaFields = this.props.schemasFields[schemaName];
-    if (!schemaFields)
+    const fields = this.props.schemasFields[schemaName];
+    if (!fields)
       return [];
-
-    const fields = schemaFields.fields;
+    
     return fields;
   }
 
@@ -61,8 +60,8 @@ class ChartConfigForm extends React.Component {
                       value={this.state.value.chartDefinition[definition].jPath}
                       onChange={e => this.newState(v => v.value.chartDefinition[definition].jPath = e.target.value)} >
               <option>Selecione um item</option>
-              {fields.map(f =>
-                  <option key={f.path} value={f.path}>{f.path}</option>
+              {fields.map(path =>
+                  <option key={path} value={path}>{path}</option>
               )}
           </Form.Select>
       </>

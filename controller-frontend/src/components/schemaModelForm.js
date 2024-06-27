@@ -138,7 +138,7 @@ class SchemaModelForm extends React.Component {
                                 <Button variant="danger"
                                         onClick={() => this.handleRemoveDefinition(index)}
                                         disabled={this.state.mode === Mode.View}>
-                                    Remover
+                                    Excluir
                                 </Button>
                             </Col>
                         </Row>

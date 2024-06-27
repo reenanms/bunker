@@ -25,12 +25,13 @@ export class SchemaRepository {
   public async updateDataTypeObjects(dataTypeObjects: DataTypeObject[]): Promise<DataTypeObject[]> {
     const dataTypeObjectsResult : DataTypeObject[] = [];
     for (const dataTypeObject of dataTypeObjects) {
+      const { parentDataTypeName, propertyName, ...rest} = dataTypeObject;
       const dataTypeObjectResult = await this.prisma.dataTypeObject.update({
         data: dataTypeObject,
         where: {
           parentDataTypeName_propertyName: {
-            parentDataTypeName: dataTypeObject.parentDataTypeName,
-            propertyName: dataTypeObject.propertyDataTypeName
+            parentDataTypeName,
+            propertyName
           }
         }
       });
@@ -134,6 +135,18 @@ export class SchemaRepository {
     await this.prisma.dataTypeObject.deleteMany({
       where: { parentDataTypeName: parentDataTypeName },
     });
+  }
+
+  public async deleteDataTypeObject(dataTypeObjects: { parentDataTypeName: string, propertyName: string }[]) {
+    for (const dataTypeObject of dataTypeObjects) {
+      await this.prisma.dataTypeObject.delete({
+        where: {
+          parentDataTypeName_propertyName: {
+            parentDataTypeName: dataTypeObject.parentDataTypeName,
+            propertyName: dataTypeObject.propertyName }
+          }
+      });
+    }
   }
   
   public async deleteDataTypeArray(parentDataTypeName: string) {

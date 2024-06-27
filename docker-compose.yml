@@ -181,7 +181,7 @@ services:
       TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
       TOKEN_EXPIRES_IN_HOURS: 6
     ports:
-      - '3002:3000'
+      - '3002:3001'
 
 
   mqtt-broker-1:
@@ -271,6 +271,13 @@ services:
       args:
         REACT_APP_BACKEND_URL: http://${EXTERNAL_IP}:3010
         REACT_APP_DASHBOARD_URL: http://${EXTERNAL_IP}:8081
+        
+        REACT_APP_INPUTER_REST_URL: http://${EXTERNAL_IP}:3002
+
+        REACT_APP_INPUTER_MQTT_URL: mqtt://${EXTERNAL_IP}
+        REACT_APP_INPUTER_MQTT_USER:
+        REACT_APP_INPUTER_MQTT_PASSWORD:
+        REACT_APP_INPUTER_MQTT_TOPIC: mqtt.device.data
     depends_on:
       controller-backend:
         condition: service_started
