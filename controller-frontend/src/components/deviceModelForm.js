@@ -20,8 +20,23 @@ class DeviceModelForm extends React.Component {
         id: this.props.value.id,
         name: this.props.value.name,
         schemaName: this.props.value.schemaName,
-        description: this.props.value.description
+        description: this.props.value.description,
+        formValidated: false
       }
+    }
+
+    isValid = event => {
+        event.preventDefault();
+        
+        const form = event.currentTarget;
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            this.setState({ formValidated: true });
+            return false;
+        }
+
+        this.setState({ formValidated: false });
+        return true;
     }
 
     editClick = _ => {
@@ -41,8 +56,9 @@ class DeviceModelForm extends React.Component {
       this.props.onCancel();
     }
 
-    saveClick = async _ => {
-      
+    saveClick = async event => {
+      if (!this.isValid(event))
+        return;
 
       const token = authService.getToken();
 
@@ -82,29 +98,29 @@ class DeviceModelForm extends React.Component {
         <>
           <Button variant="danger"    style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.excluirClick}>Excluir</Button>
           <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode !== Mode.View} onClick={this.editClick}>Editar</Button>
-          <Button variant="primary"   style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.saveClick}>Salvar</Button>
+          <Button variant="primary"   style={{float: 'right'}} hidden={this.state.mode === Mode.View} type="submit">Salvar</Button>
           <Button variant="secondary" style={{float: 'right'}} hidden={this.state.mode === Mode.View} onClick={this.cancelClick}>Cancelar</Button>
         </>
       );
     }
-
-    renderForm() {
-      return (
+    
+    render() {
+        return (
           <>
-            <Form>
+            <Form noValidate validated={this.state.formValidated} onSubmit={this.saveClick} >
               <Form.Label>Identificador</Form.Label>
               <Form.Control name="id" placeholder="Identificador"
                             value={this.state.id} onChange={e => this.setState({ id: e.target.value })}
-                            disabled/>
+                            disabled required/>
               <Form.Label>Nome</Form.Label>
               <Form.Control name="name" placeholder="Nome"
                             value={this.state.name} onChange={e => this.setState({ name: e.target.value })}
-                            disabled={this.state.mode === Mode.View}/>
+                            disabled={this.state.mode === Mode.View} required/>
               <Form.Label>Modelo de dado</Form.Label>
               <Form.Select name="schemaName" placeholder="Modelo de dado"
                           value={this.state.schemaName} onChange={e => this.setState({ schemaName: e.target.value })}
-                          disabled={this.state.mode === Mode.View}>
-                  <option>Selecione um item</option>
+                          disabled={this.state.mode === Mode.View} required>
+                  <option value="">Selecione um item</option>
                   {this.props.schemas.map(schema =>
                       <option key={schema.name} value={schema.name}>{schema.name}</option>
                   )}
@@ -112,18 +128,12 @@ class DeviceModelForm extends React.Component {
               <Form.Label>Descrição</Form.Label>
               <Form.Control name="description" placeholder="Descrição" as="textarea" rows={3}
                             value={this.state.description} onChange={e => this.setState({ description: e.target.value })}
-                            disabled={this.state.mode === Mode.View}/>
+                            disabled={this.state.mode === Mode.View} required/>
+
+                            
+              {this.renderButtons()}
             </Form>
           </>
-      );
-    }
-
-    render() {
-        return (
-            <>
-              {this.renderForm()}
-              {this.renderButtons()}
-            </>
         );
     }
 }
