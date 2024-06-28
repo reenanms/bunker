@@ -23,6 +23,20 @@ class SchemaModelForm extends React.Component {
         }
     }
 
+    isValid = event => {
+        event.preventDefault();
+
+        const form = event.currentTarget;
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            this.setState({ formValidated: true });
+            return false;
+        }
+
+        this.setState({ formValidated: false });
+        return true;
+    }
+
     editClick = _ => {
         this.setState({ mode: Mode.Edit });
     }
@@ -44,15 +58,18 @@ class SchemaModelForm extends React.Component {
         this.props.onDelete();
     }
 
-    saveClick = async _ => {
-        const token = authService.getToken();
-        let newData;
-        const properties = [];
+    saveClick = async event => {
+        if (!this.isValid(event))
+            return;
 
+        const token = authService.getToken();
+        
+        const properties = [];
         this.state.definitions.forEach(df => {
             properties.push(df);
         });
 
+        let newData;
         if (this.state.newData) {
             newData = await schemaService.createSchemaObject(token, this.state.name, properties);
         }
@@ -87,23 +104,23 @@ class SchemaModelForm extends React.Component {
             <>
                 <Button variant="danger" style={{ float: 'right' }} hidden={this.state.mode !== Mode.View} onClick={this.excluirClick}>Excluir</Button>
                 <Button variant="secondary" style={{ float: 'right' }} hidden={this.state.mode !== Mode.View} onClick={this.editClick}>Editar</Button>
-                <Button variant="primary" style={{ float: 'right' }} hidden={this.state.mode === Mode.View} onClick={this.saveClick}>Salvar</Button>
+                <Button variant="primary" style={{ float: 'right' }} hidden={this.state.mode === Mode.View} type="submit">Salvar</Button>
                 <Button variant="secondary" style={{ float: 'right' }} hidden={this.state.mode === Mode.View} onClick={this.cancelClick}>Cancelar</Button>
             </>
         );
     }
 
-    renderForm() {
+    render() {
         return (
             <>
-                <Form>
+                <Form noValidate validated={this.state.formValidated} onSubmit={this.saveClick} >
                     
                     <Form.Label>Nome</Form.Label>
                     <Form.Control
                         name="name" placeholder="Nome"
                         value={this.state.name} onChange={e => this.setState({ name: e.target.value })}
-                        disabled={this.state.mode === Mode.View} />
-                    
+                        disabled={!this.state.newData}
+                        required/>
                     <br />
 
                     <Form.Label>Propriedades</Form.Label>
@@ -118,7 +135,8 @@ class SchemaModelForm extends React.Component {
                                     placeholder="Nome"
                                     value={definition.name}
                                     onChange={e => this.handleChange(index, 'name', e.target.value)}
-                                    disabled={this.state.mode === Mode.View} />
+                                    disabled={this.state.mode === Mode.View}
+                                    required/>
                             </Col>
                             <Col>
                                 <Form.Label>Modelo de dado</Form.Label>
@@ -127,8 +145,9 @@ class SchemaModelForm extends React.Component {
                                     placeholder="Modelo de dado"
                                     value={definition.schema}
                                     onChange={e => this.handleChange(index, 'schema', e.target.value)}
-                                    disabled={this.state.mode === Mode.View}>
-                                    <option>Selecione um item</option>
+                                    disabled={this.state.mode === Mode.View}
+                                    required>
+                                    <option value="">Selecione um item</option>
                                     {this.props.schemas.map(schema =>
                                         <option key={schema.name} value={schema.name}>{schema.name}</option>
                                     )}
@@ -150,16 +169,8 @@ class SchemaModelForm extends React.Component {
                         Adicionar propriedade
                     </Button>
 
+                    {this.renderButtons()}       
                 </Form>
-            </>
-        );
-    }
-
-    render() {
-        return (
-            <>
-                {this.renderForm()}
-                {this.renderButtons()}
             </>
         );
     }

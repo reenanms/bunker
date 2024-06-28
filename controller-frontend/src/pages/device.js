@@ -1,23 +1,21 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import ListGroup from 'react-bootstrap/ListGroup'
 import Button from 'react-bootstrap/Button'
+import Table from 'react-bootstrap/Table';
 
 import AuthRedirector from '../components/authRedirector'
 
 import authService from '../services/auth.service'
 import deviceService from '../services/device.service'
 import deviceModelService from '../services/deviceModel.service'
-//import schemaService from '../services/schema.service'
-
 
 
 function withMatchProp(WrappedComponent) {
     return function WithMatchProp(props) {
-      const match = useParams();
-      return <WrappedComponent match={match} {...props} />;
+        const match = useParams();
+        return <WrappedComponent match={match} {...props} />;
     };
-  }
+}
 
 class Device extends React.Component {
 
@@ -35,6 +33,9 @@ class Device extends React.Component {
 
             deviceTokens: null,
             deviceTokensLoaded: false,
+
+            deviceData: null,
+            deviceDataLoaded: false,
         }
     }
 
@@ -70,11 +71,24 @@ class Device extends React.Component {
         this.setState({ deviceTokensLoaded: true });
     }
 
+    async loadDeviceData(token) {
+        try {
+            const deviceData = await deviceService.getDeviceData(token, this.state.deviceId);
+            this.setState({ deviceData });
+        }
+        catch (e) {
+            console.error(e)
+        }
+        
+        this.setState({ deviceDataLoaded: true });
+    }
+
     async componentDidMount() {
         const token = await authService.getToken();
 
         await this.loadDeviceAndDeviceModel(token);
         await this.loadDeviceTokens(token);
+        await this.loadDeviceData(token);
     }
 
     generateNewDeviceToken = async _ => {
@@ -100,6 +114,37 @@ class Device extends React.Component {
         return true;
     }
 
+    renderDeviceData() {
+        if (!this.state.deviceDataLoaded)
+        {
+            return (<> Carregando dados... </>);
+        }
+
+        console.log("this.state.deviceData:::", this.state.deviceData)
+
+        return (
+            <>
+                <Table striped bordered hover size="sm">
+                    <thead>
+                        <tr>
+                            <th># Dados</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {this.state.deviceData.map((data, index) =>
+                            <>
+                                <tr key={`${index}`}>
+                                    <td><code>{JSON.stringify(data)}</code></td>
+                                </tr>
+                            </>
+                        )}
+                    </tbody>
+                    
+                </ Table>
+            </>
+        )
+    }
+
     render() {
         if (!this.isLoaded()) {
             return (<></>);
@@ -113,61 +158,75 @@ class Device extends React.Component {
         const inputerMqttUrlPassword = process.env.REACT_APP_INPUTER_MQTT_PASSWORD;
         const inputerMqttUrlTopic = process.env.REACT_APP_INPUTER_MQTT_TOPIC;
 
+        const apiUrl = process.env.REACT_APP_BACKEND_URL;
+
         return (
             <>
                 <AuthRedirector redirectTo="/" />
-                
-                <h2>Dispositivo {this.state.device.name}</h2>
 
-                <p>
-                    Para enviar dados do seu disposivo para o Bunker, você tem duas opções de protocolo: REST ou MQTT.
-                    Para ambas as opções, caso você ainda esteja começando e não possua um dispositivo já funcionando, pode utilizar clients dele para fazer o envio de dado. Você pode instalar as applicações clientes ou utilizat online, como o <a href='https://reqbin.com/'>ReqBin</a> para REST e o <a href='https://www.hivemq.com/demos/websocket-client/'>HiveMQ</a> pata MQTT.
-                </p>
+                <h2>Página do Dispositivo</h2>
+            
+                <h3>Informações do Dispositivo</h3>
+                <ul>
+                    <li>Identificado: {this.state.device.id}</li>
+                    <li>Nome: {this.state.device.name}</li>
+                    <li>Modelo de dado: {this.state.device.schemaName}</li>
+                </ul>
 
-                <hr />
+                <h3>Envio de Dados</h3>
+                <p>Você pode enviar dados do seu dispositivo para o Bunker usando dois protocolos diferentes: REST ou MQTT.</p>
 
-                <div>
-                    <h4>Dados para envio via protocolo MQTT</h4>
-                    <p>
-                        Para usar o protocolo MQTT você precisa se conectar ao broken e depois enviar os dados.
-                        User a seguinte informação para conectar no broken:
-                    </p>
-
+                <h4>Envio via Protocolo MQTT</h4>
+                <ol>
+                    <li>Conecte-se ao broker MQTT usando as seguintes informações:
                     <ul>
-                        <li key="url">URL: {inputerMqttUrl}</li>
-                        <li key="user">Usuário: {inputerMqttUrlUser}</li>
-                        <li key="password">Senha: {inputerMqttUrlPassword}</li>
-                        <li key="topic">Topic: {inputerMqttUrlTopic}</li>
+                        <li>URL: {inputerMqttUrl}</li>
+                        { inputerMqttUrlUser && <li>Usuário:{inputerMqttUrlUser}</li> }
+                        { inputerMqttUrlPassword && <li>Senha:{inputerMqttUrlPassword}</li> }
+                        <li>Tópico: {inputerMqttUrlTopic}</li>
                     </ul>
+                    </li>
+                    <li>Envie os dados no formato <code>ID_DISPOSITIVO:DADO_A_SER_ENVIADO_AO_DISPOSITIVO</code>.
+                    <ul>
+                        <li>Exemplo: <code>{this.state.deviceId}:999</code></li>
+                    </ul>
+                    </li>
+                    <li>Certifique-se de enviar o dado no formato correto, de acordo com o modelo do seu dispositivo ({this.state.deviceModel.schemaName}).</li>
+                </ol>
 
-                    <p>
-                        O formato do dado a ser enviado no tópico dever ser sempre ID_DISPOSITIVO:DADO_A_SER_ENVIADO_AO_DISPOSITIVO.
-                        Case seu dispositivo receber um dado inteiro, número 999, o corpo será: <i>{this.state.deviceId}:999</i>.
-                        O formato configurado no seu modelo de dipositivo é ({this.state.deviceModel.schemaName}), não esqueça de mandar o dado no formato correto, caso contrário ele será descartado.
-                    </p>
+                <h4>Envio via Protocolo REST</h4>
+                <ol>
+                    <li>Gere um token de acesso para autenticação.</li>
+                    <li>Faça um POST em {inputerRestFullUrl}, passando o Bearer Token e o dado no formato correto, conforme o modelo do seu dispositivo ({this.state.deviceModel.schemaName}).</li>
+                </ol>
+                <p>Atenção: Caso o dado não esteja no formato correto, ele será reprovado na validação e descartado.</p>
 
-                </div>
+                <h4>Tokens Gerados</h4>
+                <ul>
+                    {this.state.deviceTokens.map((token) => (
+                        <li><div key={token} style={{ wordWrap: 'break-word' }}>{token}</div></li>
+                    ))}
+                </ul>
+                <Button onClick={this.generateNewDeviceToken}>Clique aqui para gerar um novo token.</Button>
 
-                <hr />
-
-                <div>
-                    <h4>Dados para envio via protocolo REST</h4>
-                    <p>
-                        Para usar o protocolo REST você precisa de um token gerado para passar na validação.
-                        Depois disso basta fazer um POST em {inputerRestFullUrl}, passando o Bearer Token e o dado no formato configurado no seu modelo de dipositivo, ({this.state.deviceModel.schemaName}), em um formato correto.
-                        Lembre-se caso o dado não estaja no formato correto, ele será reprovado na validação e descartado.
-                    </p>
-
-                    <h6>Lista de tokens gerados</h6>
-                    <ListGroup as="ol" numbered>
-                        {this.state.deviceTokens.map((token) =>
-                            <>
-                                <ListGroup.Item key={token} as="li" style={{ wordWrap: 'break-word' }}>{token}</ListGroup.Item>
-                            </>
-                        )}
-                    </ListGroup>
-                    <div style={{float: 'right'}}>Precisa de mais um novo token? <Button variant="link" onClick={this.generateNewDeviceToken}>Clique aqui para gerar.</Button></div>
-                </div>
+                <h3>Consulta de Dados do Dispositivo</h3>
+                <p>Para buscar os dados do seu dispositivo, use o protocolo REST:</p>
+                <ol>
+                    <li>Obtenha um token de acesso:
+                    <ul>
+                        <li>URL: POST {apiUrl}/auth</li>
+                        <li>Body: <code>{"{"} "username": &lt;username&gt;, "password": &lt;password&gt; {"}"}</code></li>
+                    </ul>
+                    </li>
+                    <li>Use o token para acessar a rota de consulta de dados:
+                    <ul>
+                        <li>URL: GET {apiUrl}/device/{this.state.device.id}/data</li>
+                    </ul>
+                    </li>
+                </ol>
+                
+                <h3>Dados do Dispositivo</h3>
+                {this.renderDeviceData()}
             </>
         )
     }

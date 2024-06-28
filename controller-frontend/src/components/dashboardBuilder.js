@@ -6,8 +6,9 @@ import Col from 'react-bootstrap/Col';
 import OverlayTrigger from 'react-bootstrap/OverlayTrigger'
 import Tooltip from 'react-bootstrap/Tooltip'
 import CloseButton from  'react-bootstrap/CloseButton'
+import Form from 'react-bootstrap/Form';
 
-import ChartConfigForm from '../components/chartConfigForm'
+import ChartConfigForm from './chartConfigForm'
 
 import authService from '../services/auth.service'
 import userService from '../services/user.service'
@@ -42,7 +43,24 @@ class DashboardBuilder extends React.Component {
 
             devicesToSelect: null,
             mapDeviceSchemas: null,
+            
+            formValidated: false,
+            errorMessage: null
         }
+    }
+
+    isValid = event => {
+        event.preventDefault();
+
+        const form = event.currentTarget;
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            this.setState({ formValidated: true });
+            return false;
+        }
+
+        this.setState({ formValidated: false });
+        return true;
     }
 
     async loadUser(token) {
@@ -159,7 +177,7 @@ class DashboardBuilder extends React.Component {
             for(const device of devices) {
                 devicesToSelect.push({
                     value: device.id,
-                    name: `${deviceModel.name}: ${device.name}`
+                    name: `${deviceModel.name}: ${device.id}`
                 });
 
                 mapDeviceSchemas[device.id] = deviceModel.schemaName;
@@ -304,7 +322,10 @@ class DashboardBuilder extends React.Component {
         return true;
     }
 
-    sendConfigData = async _ => {
+    sendConfigData = async event => {
+        if (!this.isValid(event))
+            return;
+
         const token = authService.getToken();
         if (this.state.isNew)
             await dashboardService.createDashboardConfig(token, this.state.config);
@@ -326,25 +347,27 @@ class DashboardBuilder extends React.Component {
         
         return (
             <>
-                <Row>
-                    <Col>
-                        {this.renderRows(this.state.config)}
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <Button variant="primary"
-                                style={{float: 'right'}}
-                                onClick={this.sendConfigData}>
-                            Savar configuração
-                        </Button>
-                        <Button variant="secondary"
-                                style={{float: 'right'}}
-                                onClick={_ => this.props.onCancel()}>
-                            Cancelar
-                        </Button>  
-                    </Col>
-                </Row>
+                <Form noValidate validated={this.state.formValidated} onSubmit={this.sendConfigData}>
+                    <Row>
+                        <Col>
+                            {this.renderRows(this.state.config)}
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Button variant="primary"
+                                    style={{float: 'right'}}
+                                    type="submit">
+                                Savar configuração
+                            </Button>
+                            <Button variant="secondary"
+                                    style={{float: 'right'}}
+                                    onClick={_ => this.props.onCancel()}>
+                                Cancelar
+                            </Button>
+                        </Col>
+                    </Row>
+                </Form>
             </>
         );
     }

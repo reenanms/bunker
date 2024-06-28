@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
-import authService from '../services/auth.service';
-import userService from '../services/user.service';
 import { Navigate } from "react-router-dom";
-import AuthRedirector from '../components/authRedirector'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
+import Alert from 'react-bootstrap/Alert';
+
+import AuthRedirector from '../components/authRedirector'
+
+import authService from '../services/auth.service';
+import userService from '../services/user.service';
+
 
 class Login extends Component {
     constructor(props) {
@@ -12,12 +16,30 @@ class Login extends Component {
         this.state = {
             username: "",
             password: "",
-            redirectTo: null
+            redirectTo: null,
+
+            formValidated: false,
+            errorMessage: null
         }
     }
 
-    sendLogin = async (event) => {
+    isValid = event => {
         event.preventDefault();
+
+        const form = event.currentTarget;
+        if (!form.checkValidity()) {
+            event.stopPropagation();
+            this.setState({ formValidated: true });
+            return false;
+        }
+
+        this.setState({ formValidated: false });
+        return true;
+    }
+
+    sendLogin = async event => {
+        if (!this.isValid(event))
+            return;
 
         try {
             const auth = await authService.authenticate(this.state.username, this.state.password);
@@ -29,9 +51,23 @@ class Login extends Component {
             this.setState({ redirectTo: "/home" });
             window.location.reload();
         } catch (error) {
+            this.setState({ errorMessage: "Erro ao efetuar login." });
             console.error(error);
-            alert("Erro ao efetuar login.");
         }
+    }
+
+    renderErrorMessage() {
+        if (!this.state.errorMessage) {
+            return (<></>);
+        }
+
+        return (
+            <>
+                <Form.Group controlId="alert">
+                    <Alert variant="danger">{this.state.errorMessage}</Alert>
+                </Form.Group>
+            </>
+        )
     }
 
     render() {
@@ -47,22 +83,26 @@ class Login extends Component {
 
                 <h2>Login</h2>
 
-                <Form onSubmit={this.sendLogin}>
-                    <Form.Group className="mb-3" controlId="password">
+                <Form noValidate validated={this.state.formValidated} onSubmit={this.sendLogin}>
+                    <Form.Group controlId="passwordv00">
                         <Form.Label>Usuário</Form.Label>
-                        <Form.Control type="text"
+                        <Form.Control required
+                                      type="text"
                                       placeholder="Usuário"
                                       value={this.state.username}
                                       onChange={e => this.setState({ username: e.target.value })} />
                     </Form.Group>
 
-                    <Form.Group className="mb-3" controlId="password">
+                    <Form.Group controlId="password">
                         <Form.Label>Senha</Form.Label>
-                        <Form.Control type="password"
+                        <Form.Control required
+                                      type="password"
                                       placeholder="Senha"
                                       value={this.state.password}
                                       onChange={e => this.setState({ password: e.target.value })} />
                     </Form.Group>
+
+                    {this.renderErrorMessage()}
                     
                     <div style={{float: 'right'}}>Não possui cadastro? <a href='/register'>Registrar novo usuário</a></div>
                     

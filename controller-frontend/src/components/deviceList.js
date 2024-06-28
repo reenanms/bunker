@@ -39,7 +39,7 @@ class DeviceList extends React.Component {
         <Row key={index} style={{ verticalAlign: 'bottom' }}>
           <Col>
             <p>
-              <b>{device.name}</b>
+              <b>{device.id}</b>
               <Link
                   style={{float: 'right'}}
                   to={{ pathname: `/device/${device.id}` }}>
