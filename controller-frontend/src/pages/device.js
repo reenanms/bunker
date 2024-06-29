@@ -115,12 +115,9 @@ class Device extends React.Component {
     }
 
     renderDeviceData() {
-        if (!this.state.deviceDataLoaded)
-        {
-            return (<> Carregando dados... </>);
+        if (!this.state.deviceDataLoaded) {
+            return (<>Carregando dados...</>);
         }
-
-        console.log("this.state.deviceData:::", this.state.deviceData)
 
         return (
             <>

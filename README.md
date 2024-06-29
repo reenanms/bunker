@@ -21,7 +21,9 @@ Bunker é um projeto desenvolvido em TypeScript, JavaScript e Python que visa cr
 Para rodar o projeto, basta utilizar o arquivo `docker-compose.yml` disponível no repositório. No Windows, execute o seguinte comando:
 
 ```powershell
-$env:EXTERNAL_IP="localhost"
+$env:HOST_INTERNAL_IP="host.docker.internal"
+$env:HOST_EXTERNAL_IP="localhost"
+
 docker-compose up -d --force-recreate
 ```
 

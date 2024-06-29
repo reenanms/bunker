@@ -70,19 +70,9 @@ class Login extends Component {
         )
     }
 
-    render() {
-        if (this.state.redirectTo) {
-            return (
-                <Navigate to={this.state.redirectTo} replace={true} />
-            )
-        }
-
+    renderLoginForm() {
         return (
             <>
-                <AuthRedirector whenLogged redirectTo="/home" />
-
-                <h2>Login</h2>
-
                 <Form noValidate validated={this.state.formValidated} onSubmit={this.sendLogin}>
                     <Form.Group controlId="passwordv00">
                         <Form.Label>Usuário</Form.Label>
@@ -108,6 +98,34 @@ class Login extends Component {
                     
                     <Button variant="primary" type="submit">Entrar</Button>
                 </Form>
+            </>
+        )
+    }
+
+    render() {
+        if (this.state.redirectTo) {
+            return (
+                <Navigate to={this.state.redirectTo} replace={true} />
+            )
+        }
+
+        return (
+            <>
+                <AuthRedirector whenLogged redirectTo="/home" />
+
+                <h2>Login</h2>
+
+                <h3>Bem-vindo ao Bunker</h3>
+
+                {this.renderLoginForm()}
+
+                <div>
+                    <h3>Atenção</h3>
+                    <p>
+                        Esta é uma versão de testes do sistema Bunker. Os dados podem ser limpos a
+                        qualquer momento para a publicação de uma nova versão.
+                    </p>
+                </div>
             </>
         )
     }

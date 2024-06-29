@@ -15,7 +15,8 @@ class Home extends React.Component {
                 
                 <h2>Home</h2>
                 
-                <h3>Bem-vindo ao Bunker!</h3>
+                <h3>Bem-vindo ao Bunker</h3>
+
                 <p>Plataforma de Centralização de Dados de Dispositivos de IoT</p>
                 <p>Se é sua primeira vez por aqui, vamos lhe auxiliar com um passo a passo de como usar o nosso sistema:</p>
 
