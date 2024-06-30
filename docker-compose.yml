@@ -13,11 +13,11 @@ services:
 
 
   broker-1:
+    image: confluentinc/cp-kafka:7.6.0
     container_name: broker-1
     networks: 
       - netbroker
     restart: unless-stopped
-    build: ./docker-files/kafka
     ports:
     # To learn about configuring Kafka for access across networks see
     # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
@@ -27,7 +27,7 @@ services:
       zookeeper:
         condition: service_started
     environment:
-      KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker-1:19092,EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092,DOCKER://host.docker.internal:29092
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://broker-1:19092,EXTERNAL://${HOST_EXTERNAL_IP:-127.0.0.1}:9092,DOCKER://${HOST_INTERNAL_IP}:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
@@ -37,11 +37,11 @@ services:
 
   #infos: https://stackoverflow.com/questions/64865361/docker-compose-create-kafka-topics
   broker-init:
+    image: confluentinc/cp-kafka:7.6.0
     container_name: broker-init
     networks: 
       - netbroker
     #restart: no
-    build: ./docker-files/kafka
     depends_on:
       broker-1:
         condition: service_started
@@ -82,7 +82,7 @@ services:
     environment:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
-      MONGO_REPLICA_HOST: host.docker.internal
+      MONGO_REPLICA_HOST: ${HOST_INTERNAL_IP}
       MONGO_REPLICA_PORT: 27018
     ports:
       - '27018:27018'
@@ -136,7 +136,7 @@ services:
       SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
       NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
       MESSAGER_ID: inputer-1
-      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_BROKERS: ${HOST_INTERNAL_IP}:29092
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
 
 
@@ -156,7 +156,7 @@ services:
       SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
       NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
       MESSAGER_ID: inputer-2
-      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_BROKERS: ${HOST_INTERNAL_IP}:29092
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
 
 
@@ -176,7 +176,7 @@ services:
       SQL_CONNECTION: postgresql://postgres:Postgres2022!@postgres:5432/bunkerController?schema=public
       NOSQL_CONNECTION: mongodb://root:root@mongo:27018/bunkerDeviceData?authSource=admin
       MESSAGER_ID: sender-rest-1
-      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_BROKERS: ${HOST_INTERNAL_IP}:29092
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
       TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
       TOKEN_EXPIRES_IN_HOURS: 6
@@ -218,12 +218,12 @@ services:
         condition: service_started
     environment:
       MESSAGER_ID: sender-mqtt-1
-      MESSAGER_BROKERS: host.docker.internal:29092
+      MESSAGER_BROKERS: ${HOST_INTERNAL_IP}:29092
       MESSAGER_TOPIC_DEVICE_DATA: bunker.device.data
       TOKEN_PRIVATE_KEY: 2a7cbb70-e53b-4ef7-925f-d911bffeec30
       TOKEN_EXPIRES_IN_HOURS: 6
       MQTT_ID: sender-mqtt-1
-      MQTT_URL: mqtt://host.docker.internal
+      MQTT_URL: mqtt://${HOST_INTERNAL_IP}
       MQTT_USERNAME:
       MQTT_PASSWORD:
       MQTT_TOPIC_DEVICE_DATA: mqtt.device.data
@@ -269,12 +269,12 @@ services:
     build:
       context: ./controller-frontend
       args:
-        REACT_APP_BACKEND_URL: http://${EXTERNAL_IP}:3010
-        REACT_APP_DASHBOARD_URL: http://${EXTERNAL_IP}:8081
+        REACT_APP_BACKEND_URL: http://${HOST_EXTERNAL_IP}:3010
+        REACT_APP_DASHBOARD_URL: http://${HOST_EXTERNAL_IP}:8081
         
-        REACT_APP_INPUTER_REST_URL: http://${EXTERNAL_IP}:3002
+        REACT_APP_INPUTER_REST_URL: http://${HOST_EXTERNAL_IP}:3002
 
-        REACT_APP_INPUTER_MQTT_URL: mqtt://${EXTERNAL_IP}
+        REACT_APP_INPUTER_MQTT_URL: mqtt://${HOST_EXTERNAL_IP}
         REACT_APP_INPUTER_MQTT_USER:
         REACT_APP_INPUTER_MQTT_PASSWORD:
         REACT_APP_INPUTER_MQTT_TOPIC: mqtt.device.data

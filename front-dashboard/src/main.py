@@ -20,12 +20,15 @@ def loadDashboardJson(username):
     if (username is None):
         return None;
 
-    queryResult = database.readCollectionData("DashboardConfig", {"username": { "$eq": username} });
-    for item in queryResult:
-        config = item["config"];
-        data = json.loads(config);
-        return data;
-        
+    try:
+        queryResult = database.readCollectionData("DashboardConfig", {"username": { "$eq": username} });
+        for item in queryResult:
+            config = item["config"];
+            data = json.loads(config);
+            return data;
+    except:
+        return None;
+
     return None;
 
 def getCurrentUsername():

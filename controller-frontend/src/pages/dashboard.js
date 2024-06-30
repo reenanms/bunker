@@ -6,6 +6,7 @@ import AuthRedirector from '../components/authRedirector'
 
 import authService from '../services/auth.service'
 import userService from '../services/user.service'
+import dashboardService from '../services/dashboard.service'
 
 
 class Dashboard extends React.Component {
@@ -13,13 +14,14 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             user: null,
-            redirectTo: null
+            redirectTo: null,
+            isNew: null,
+            screenLoaded: false,
         }
     }
 
-    async loadUser() {
+    async loadUser(token) {
         try {
-            const token = await authService.getToken();
             const user = await userService.getUser(token);
                 
             this.setState({ user });
@@ -29,34 +31,74 @@ class Dashboard extends React.Component {
         }
     }
 
+    async loadIsNew(token) {
+        try {
+            await dashboardService.getDashboardConfig(token);
+            this.setState({ isNew: false });
+        }
+        catch (e) {
+            this.setState({ isNew: true });
+        }
+    }
+
     async componentDidMount() {
-        await this.loadUser();
+        const token = await authService.getToken();
+
+        await this.loadUser(token);
+        await this.loadIsNew(token);
+
+        this.setState({ screenLoaded: true });
     }
 
     redirectToDashboardConfig = _ => {
-        this.setState({redirectTo: "/dashboard/config" })
+        this.setState({ redirectTo: "/dashboard/config" })
     }
 
-    render() {
-        if (this.state.redirectTo) {
-            return (
-                <Navigate to={this.state.redirectTo} replace={true} />
-            )
+    renderLoading() {
+        if (this.state.screenLoaded) {
+            return (<></>);
         }
 
-        if (!this.state.user) {
-            return ( <></> );
+        return (
+            <>Carregando dados...</>
+        );
+    }
+
+    renderNewDashboard() {
+        if (!this.state.screenLoaded) {
+            return (<></>);
         }
 
-        const dashboardBaseUrl = process.env.REACT_APP_DASHBOARD_URL;
-        const dashboardFullUrl = `${dashboardBaseUrl}/?username=${this.state.user.username}&embed=true`;
+        if (!this.state.isNew) {
+            return (<></>);
+        }
 
         return (
             <>
-                <AuthRedirector redirectTo="/" />
+                <p>Dashboar ainda não foi configurado para o seu usuário</p>
+                <Button
+                    variant="secondary"
+                    onClick={this.redirectToDashboardConfig}>
+                    Configurar
+                </Button>
+            </>
+        );
+    }
 
-                <h2>Dashboard</h2>
+    renderConfiguredDashboard() {
+        if (!this.state.screenLoaded) {
+            return (<></>);
+        }
 
+        if (this.state.isNew) {
+            return (<></>);
+        }
+
+        const dashboardBaseUrl = process.env.REACT_APP_DASHBOARD_URL;
+        const dashboardFullUrl = `${dashboardBaseUrl}/?username=${this.state.user.username}&embed=true&embed_options=light_theme`;
+
+        return (
+            <>
                 <iframe
                     title="Dashboard"
                     src={dashboardFullUrl}
@@ -71,6 +113,26 @@ class Dashboard extends React.Component {
                     onClick={this.redirectToDashboardConfig}>
                     Editar
                 </Button>
+            </>
+        );
+    }
+
+    render() {
+        if (this.state.redirectTo) {
+            return (
+                <Navigate to={this.state.redirectTo} replace={true} />
+            )
+        }
+
+        return (
+            <>
+                <AuthRedirector redirectTo="/" />
+
+                <h2>Dashboard</h2>
+
+                {this.renderLoading()}
+                {this.renderNewDashboard()}
+                {this.renderConfiguredDashboard()}
             </>
         );
     }
