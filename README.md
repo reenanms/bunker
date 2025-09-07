@@ -1,24 +1,31 @@
 # Bunker
 
-Bunker é um projeto desenvolvido em TypeScript, JavaScript e Python que visa criar uma central de dados para sistemas IoT (Internet of Things). O projeto oferece as seguintes funcionalidades:
+Bunker is a project developed in TypeScript, JavaScript, and Python that aims to create a data hub for IoT (Internet of Things) systems. The project provides a robust platform for managing, ingesting, and querying data from various IoT devices.
 
-## Principais Recursos
+## Main Features
 
-1. **Cadastro de Esquemas de Dados**: Os usuários podem definir os esquemas de dados que serão utilizados para armazenar as informações coletadas pelos dispositivos IoT.
+1. **Data Schema Registration**: Users can define data schemas to structure the information collected from IoT devices, ensuring consistency and validation.
 
-2. **Cadastro de Modelos de Dispositivos**: Os usuários podem cadastrar os diferentes modelos de dispositivos IoT que serão integrados ao sistema.
+2. **Device Model Registration**: Users can register different IoT device models to be integrated into the system, allowing for flexible device management.
 
-3. **Cadastro de Dispositivos**: Os usuários podem cadastrar os dispositivos IoT que enviarão dados para o sistema.
+3. **Device Registration**: Users can add individual IoT devices that will send data to the system, enabling device-level tracking and management.
 
-4. **API de Consulta de Dados**: O sistema disponibiliza uma API REST para que os usuários possam consultar os dados coletados pelos dispositivos IoT.
+4. **Data Query API**: The system offers a REST API for users to query data collected from IoT devices, supporting integration with dashboards, analytics, and other applications.
 
-5. **Ingestão de Dados via MQTT**: O projeto inclui um serviço de ingestão de dados via protocolo MQTT, permitindo que os dispositivos IoT enviem dados de forma assíncrona.
+5. **Data Ingestion via MQTT**: The project includes a service for ingesting data using the MQTT protocol, allowing IoT devices to send data asynchronously and efficiently.
 
-6. **Ingestão de Dados via REST**: Além do MQTT, o projeto também conta com um serviço de ingestão de dados via API REST, possibilitando a integração com diversos tipos de dispositivos IoT.
+6. **Data Ingestion via REST**: In addition to MQTT, the project also provides a REST API for data ingestion, making it compatible with a wide range of IoT devices and applications.
 
-## Rodando o Projeto
+## Additional Information
 
-Para rodar o projeto, basta utilizar o arquivo `docker-compose.yml` disponível no repositório. No Windows, execute o seguinte comando:
+- **Technology Stack**: The backend is built with TypeScript, JavaScript, and Python, leveraging modern frameworks and libraries for scalability and reliability.
+- **Extensibility**: The architecture is designed to be modular, making it easy to add new device types, data sources, or integrations.
+- **Security**: The system supports secure data transmission and authentication for device and user access.
+- **Documentation**: API documentation and usage examples are available in the `/docs` directory (if present).
+
+## Running the Project
+
+To run the project, use the `docker-compose.yml` file provided in the repository. On Windows, execute the following commands in PowerShell:
 
 ```powershell
 $env:HOST_INTERNAL_IP="host.docker.internal"
@@ -27,8 +34,12 @@ $env:HOST_EXTERNAL_IP="localhost"
 docker-compose up -d --force-recreate
 ```
 
-## Contribuição
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues, enviar pull requests ou entrar em contato com a equipe de desenvolvimento.
+This will start all necessary services in detached mode.
 
-## Licença
-Este projeto está licenciado sob a Licença MIT.
+## Contribution
+
+Contributions are welcome! Feel free to open issues, submit pull requests, or contact the development team for collaboration.
+
+## License
+
+This project is licensed under the MIT License.
